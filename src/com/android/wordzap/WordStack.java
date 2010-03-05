@@ -1,3 +1,11 @@
+/**
+ * @author Kowshik Prakasam
+ * class WordStack models a stack of letters that form a single word on the visual grid for the human player
+ * This class is put to use inside class LetterGrid that maintains a stack of WordStacks, with each WordStack representing a word on the visual grid
+ * The interface to this class includes methods to lock / unlock a full word, indicating completion of the word
+ * Also monitors the size of the internal stack of letters, and never allows it to exceed the specified limit in the constructor
+ */
+
 package com.android.wordzap;
 
 import java.util.EmptyStackException;
@@ -5,56 +13,99 @@ import java.util.Iterator;
 import java.util.Stack;
 
 public class WordStack extends Stack<Character> {
-	private boolean wordComplete;
+	/*
+	 * Integer storing the maximum size of the word. Usually corresponds to the
+	 * number of columns in the visual grid of letters seen by the human player
+	 * on screen.
+	 */
 	private int wordLimit;
-	public WordStack(int wordLimit){
-		this.wordComplete=false;
-		this.wordLimit=wordLimit;
+
+	/* Flag used to tell if word is locked / completed */
+	private boolean wordComplete;
+
+	public WordStack(int wordLimit) throws InvalidGridSizeException {
+		if (wordLimit <= 0) {
+			/* wordLimit can never be negative */
+			throw new InvalidGridSizeException(1, wordLimit);
+		}
+		this.wordComplete = false;
+		this.wordLimit = wordLimit;
+
 	}
-	
-	public boolean isWordComplete(){
+
+	/*
+	 * Tells if the internal word stored has been completed by the human player
+	 * If return value is true, then word is complete, else it is incomplete
+	 */
+	public boolean isWordComplete() {
 		return this.wordComplete;
 	}
-	
-	public boolean lockWord(){
-		if(this.size() == 0)
+
+	/*
+	 * Locks the word. Returns true if successful, else false
+	 */
+	public boolean lockWord() {
+		if (this.size() == 0)
 			return false;
-		this.wordComplete=true;
+		this.wordComplete = true;
 		return true;
 	}
-	
-	public void unlockWord(){
-		this.wordComplete=false;
+
+	/*
+	 * Unlocks the word
+	 */
+	public void unlockWord() {
+		this.wordComplete = false;
 	}
-	
+
+	/*
+	 * Pushes a letter into the internal stack of letters Returns true if
+	 * successful, else returns false if word is already completed (locked)
+	 * Throws WordStackOverflowException if word is not completed (locked), and
+	 * stack limit has been reached
+	 */
 	public boolean pushLetter(char letter) throws WordStackOverflowException {
-		if(isWordComplete()){
+		if (isWordComplete()) {
 			return false;
 		}
-        if (this.size() < wordLimit) {
-            this.push(letter);
-            return true;
-        } else {
-            throw new WordStackOverflowException(letter, wordLimit);
-        }
-    }
-	
-	public char popLetter() throws EmptyStackException{
-        Character c=this.pop();
-        return c.charValue();
-    }
-	
-	public char peekLetter() throws EmptyStackException{
-        Character c=this.peek();
-        return c.charValue();
-    }
-	
-	
-	public String toString(){
-		String word="";
-		Iterator<Character> stackIter=this.iterator();
-		while(stackIter.hasNext()){
-			word+=stackIter.next().charValue();
+		if (this.size() < wordLimit) {
+			this.push(letter);
+			return true;
+		} else {
+			throw new WordStackOverflowException(letter, wordLimit);
+		}
+	}
+
+	/*
+	 * Pops a letter from top of stack Returns the popped letter Throws
+	 * EmptyStackException if an empty stack is popped
+	 */
+	public char popLetter() throws EmptyStackException {
+		Character c = this.pop();
+		return c.charValue();
+	}
+
+	/*
+	 * Returns letter at top of stack without popping it Throws
+	 * EmptyStackException if the operation is carried out on an empty stack
+	 */
+	public char peekLetter() throws EmptyStackException {
+		Character c = this.peek();
+		return c.charValue();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Vector#toString()
+	 * 
+	 * Returns a string representation of the stack's contents
+	 */
+	public String toString() {
+		String word = "";
+		Iterator<Character> stackIter = this.iterator();
+		while (stackIter.hasNext()) {
+			word += stackIter.next().charValue();
 		}
 		return word;
 	}

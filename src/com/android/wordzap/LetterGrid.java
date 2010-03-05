@@ -28,7 +28,7 @@ public class LetterGrid {
 	}
 
 	public void putLetter(char letter) throws WordStackOverflowException,
-			EmptyStackException {
+			EmptyStackException, InvalidGridSizeException {
 		if (stackOfWords.empty()) {
 			this.addNewStack(letter);
 
@@ -42,7 +42,7 @@ public class LetterGrid {
 		}
 	}
 
-	public void addNewStack(char letter) throws WordStackOverflowException {
+	public void addNewStack(char letter) throws WordStackOverflowException, InvalidGridSizeException {
 		WordStack aNewStack = new WordStack(numCols);
 		aNewStack.pushLetter(letter);
 		stackOfWords.push(aNewStack);
