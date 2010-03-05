@@ -6,7 +6,7 @@
 		android:layout_width="76px" android:layout_height="137px"
 		android:layout_x="0px" android:layout_y="49px">
 		<Button android:id="@+id/buttonLeftBotFirst" android:layout_width="75dp"
-			android:layout_height="wrap_content" android:text="E"
+			android:layout_height="wrap_content" android:text="W"
 			android:textStyle="bold" android:textSize="20sp"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true">
@@ -22,12 +22,12 @@
 		android:layout_x="85px" android:layout_y="49px">
 		<Button android:id="@+id/widget105" android:layout_width="75dp"
 			android:textSize="20sp" android:textStyle="bold"
-			android:layout_height="wrap_content" android:text="R"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_alignParentTop="true" android:layout_alignLeft="@+id/widget106">
 		</Button>
 		<Button android:id="@+id/widget106" android:layout_width="75dp"
 			android:textSize="20sp" android:layout_height="wrap_content"
-			android:text="B" android:textStyle="bold"
+			android:text="E" android:textStyle="bold"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true">
 		</Button>
@@ -37,13 +37,13 @@
 		android:layout_x="168px" android:layout_y="49px">
 		<Button android:id="@+id/widget110" android:layout_width="75dp"
 			android:textSize="20sp" android:layout_height="wrap_content"
-			android:text="F" android:textStyle="bold"
+			android:text="R" android:textStyle="bold"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true">
 		</Button>
 		<Button android:id="@+id/widget109" android:layout_width="75dp"
 			android:textSize="20sp" android:layout_height="wrap_content"
-			android:text="S" android:textStyle="bold"
+			android:text="C" android:textStyle="bold"
 			android:layout_alignParentTop="true" android:layout_alignParentLeft="true">
 		</Button>
 	</RelativeLayout>
@@ -52,13 +52,13 @@
 		android:layout_x="252px" android:layout_y="49px">
 		<Button android:id="@+id/widget113" android:layout_width="75dp"
 			android:textSize="20sp" android:layout_height="wrap_content"
-			android:text="I" android:textStyle="bold"
+			android:text="S" android:textStyle="bold"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true">
 		</Button>
 		<Button android:id="@+id/widget112" android:layout_width="75dp"
 			android:textSize="20sp" android:layout_height="wrap_content"
-			android:text="T" android:textStyle="bold"
+			android:text="E" android:textStyle="bold"
 			android:layout_alignParentTop="true" android:layout_alignParentLeft="true">
 		</Button>
 	</RelativeLayout>
@@ -78,27 +78,27 @@
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget165" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="R"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget166" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="C"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget167" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="R"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget168" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="C"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget170" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="S"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget171" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 
@@ -110,31 +110,31 @@
 		android:layout_y="0px">
 
 		<TextView android:id="@+id/widget163" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="A"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget165" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="A"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget166" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="A"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget167" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="A"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget168" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="A"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget170" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="E"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget171" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="E"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 
@@ -146,31 +146,31 @@
 		android:layout_y="0px">
 
 		<TextView android:id="@+id/widget163" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget165" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget166" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget167" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget168" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="T"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget170" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="E"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget171" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="E"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 
@@ -182,31 +182,31 @@
 		android:layout_y="0px">
 
 		<TextView android:id="@+id/widget163" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="E"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget165" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget166" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget167" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="S"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget168" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="S"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget170" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget171" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 
@@ -218,31 +218,31 @@
 		android:layout_y="0px">
 
 		<TextView android:id="@+id/widget163" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text="R"
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget165" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget166" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget167" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget168" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget170" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 		<TextView android:id="@+id/widget171" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="W"
+			android:layout_height="wrap_content" android:text=""
 			android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 
