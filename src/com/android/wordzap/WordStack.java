@@ -34,6 +34,13 @@ public class WordStack extends Stack<Character> {
 	}
 
 	/*
+	 * Returns the word limit set in the constructor
+	 */
+	public int getWordLimit() {
+		return this.wordLimit;
+	}
+
+	/*
 	 * Tells if the internal word stored has been completed by the human player
 	 * If return value is true, then word is complete, else it is incomplete
 	 */
@@ -42,13 +49,15 @@ public class WordStack extends Stack<Character> {
 	}
 
 	/*
-	 * Locks the word. Returns true if successful, else false
+	 * Locks the word. Throws InvalidOperationException if word is locked when size is zero
 	 */
-	public boolean lockWord() {
-		if (this.size() == 0)
-			return false;
+	public void lockWord() throws InvalidStackOperationException {
+		if (this.size() == 0) {
+			throw new InvalidStackOperationException(
+					"You cannot lock a word with size zero.");
+		}
 		this.wordComplete = true;
-		return true;
+
 	}
 
 	/*
@@ -64,13 +73,15 @@ public class WordStack extends Stack<Character> {
 	 * Throws WordStackOverflowException if word is not completed (locked), and
 	 * stack limit has been reached
 	 */
-	public boolean pushLetter(char letter) throws WordStackOverflowException {
+	public void pushLetter(char letter) throws WordStackOverflowException,
+			InvalidStackOperationException {
 		if (isWordComplete()) {
-			return false;
+			throw new InvalidStackOperationException(
+					"You have to unlock a word before you can push a letter.");
 		}
 		if (this.size() < wordLimit) {
 			this.push(letter);
-			return true;
+
 		} else {
 			throw new WordStackOverflowException(letter, wordLimit);
 		}
@@ -80,7 +91,12 @@ public class WordStack extends Stack<Character> {
 	 * Pops a letter from top of stack Returns the popped letter Throws
 	 * EmptyStackException if an empty stack is popped
 	 */
-	public char popLetter() throws EmptyStackException {
+	public char popLetter() throws EmptyStackException,
+			InvalidStackOperationException {
+		if (isWordComplete()) {
+			throw new InvalidStackOperationException(
+					"You have to unlock a word before you can pop a letter.");
+		}
 		Character c = this.pop();
 		return c.charValue();
 	}

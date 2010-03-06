@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.android.wordzap.InvalidGridSizeException;
+import com.android.wordzap.InvalidStackOperationException;
 import com.android.wordzap.WordStack;
 import com.android.wordzap.WordStackOverflowException;
 
@@ -77,7 +78,7 @@ public class WordStackTest {
 
 	@Test
 	public void testIsWordComplete() throws InvalidGridSizeException,
-			WordStackOverflowException {
+			WordStackOverflowException, InvalidStackOperationException {
 		WordStack testStack = new WordStack(this.wordLimit);
 		testStack.pushLetter('A');
 		testStack.lockWord();
@@ -89,14 +90,22 @@ public class WordStackTest {
 
 	@Test
 	public void testLockWord() throws InvalidGridSizeException,
-			WordStackOverflowException {
+			WordStackOverflowException, InvalidStackOperationException {
 
 		WordStack testStack = new WordStack(this.wordLimit);
-		assertFalse(testStack.lockWord());
+		
+		boolean exceptionCaught=false;
+		try{
+			testStack.lockWord();
+		}
+		catch(InvalidStackOperationException ex){
+			 exceptionCaught = true;
+		}
+		assertTrue("lockWord() FAILED to throw InvalidOperationException when word was locked with size zero", exceptionCaught);
 		assertFalse(testStack.isWordComplete());
 
 		testStack.pushLetter('A');
-		assertTrue(testStack.lockWord());
+		testStack.lockWord();
 		assertTrue(testStack.isWordComplete());
 
 	}
@@ -114,32 +123,59 @@ public class WordStackTest {
 
 	}
 
+	//Generates a random character
+	private char genRandomChar() {
+		char letter = 'A';
+		int offset = new Random().nextInt();
+		if (offset < 0) {
+			offset *= -1;
+		}
+
+		offset = offset % 26;
+		return (char) (letter + offset);
+	}
+	
 	/*
 	 * Tests the Stack's push interface
 	 */
-
 	@Test
 	public void testPushLetter() throws InvalidGridSizeException,
-			WordStackOverflowException {
-		int smallWordLimit = 5;
+			WordStackOverflowException, InvalidStackOperationException {
 
-		WordStack testStack = new WordStack(smallWordLimit);
-		boolean pushResult = testStack.pushLetter('A');
-		assertTrue(pushResult);
-		assertEquals(testStack.toString(), "A");
+		WordStack testStack = this.genSmallStack();
+		String targetWord = "";
+		char letter = this.genRandomChar();
+		for (int index = 0; index < testStack.getWordLimit() - 1; index++) {
+			testStack.pushLetter(letter);
+			targetWord += letter;
+			assertEquals(testStack.toString(), targetWord);
+		}
 
-		assertTrue(testStack.pushLetter('B'));
-		assertEquals(testStack.toString(), "AB");
-		assertTrue(testStack.pushLetter('C'));
-		assertEquals(testStack.toString(), "ABC");
-		assertTrue(testStack.pushLetter('D'));
-		assertEquals(testStack.toString(), "ABCD");
-		assertTrue(testStack.pushLetter('E'));
-		assertEquals(testStack.toString(), "ABCDE");
-
+		// Checking if pushLetter throws InvalidOperationException when you push
+		// a letter is pushed after locking the word
 		boolean exceptionCaught = false;
 		try {
-			assertTrue(testStack.pushLetter('F'));
+			testStack.lockWord();
+			testStack.pushLetter('F');
+
+		} catch (InvalidStackOperationException operationEx) {
+			exceptionCaught = true;
+		}
+
+		assertTrue(
+				"The method pushLetter(...) DIDNOT FAIL with InvalidOperationException exception when a letter was pushed into a locked stack",
+				exceptionCaught);
+
+		// Checking if stack is unchanged after last faulty push operation
+		assertEquals(testStack.toString(), targetWord);
+
+		testStack.unlockWord();
+		testStack.pushLetter(letter);
+		targetWord += letter;
+		assertEquals(testStack.toString(), targetWord);
+		exceptionCaught = false;
+		try {
+			testStack.pushLetter('G');
 
 		} catch (WordStackOverflowException overflowEx) {
 			exceptionCaught = true;
@@ -156,30 +192,28 @@ public class WordStackTest {
 	 */
 	@Test
 	public void testPopLetter() throws InvalidGridSizeException,
-			WordStackOverflowException {
-		int smallWordLimit = 5;
-		WordStack testStack = new WordStack(smallWordLimit);
-		testStack.pushLetter('A');
-		testStack.pushLetter('B');
-		testStack.pushLetter('C');
-		testStack.pushLetter('D');
-		testStack.pushLetter('E');
+			WordStackOverflowException, InvalidStackOperationException {
 
-		assertEquals(testStack.popLetter(), 'E');
-		assertEquals(testStack.toString(), "ABCD");
+		WordStack testStack = this.genSmallStack();
+		int wordLimit = testStack.getWordLimit();
+		char letter = this.genRandomChar();
+		String targetWord = "";
 
-		assertEquals(testStack.popLetter(), 'D');
-		assertEquals(testStack.toString(), "ABC");
+		// Populating stack
+		for (int index = 0; index < wordLimit; index++) {
+			testStack.pushLetter(letter);
+			targetWord += letter;
+		}
 
-		assertEquals(testStack.popLetter(), 'C');
-		assertEquals(testStack.toString(), "AB");
+		// Emptying stack
+		for (int index = 1; index <= wordLimit; index++) {
+			assertEquals(testStack.popLetter(), letter);
+			assertEquals(testStack.toString(), targetWord.substring(0,
+					targetWord.length() - index));
+		}
 
-		assertEquals(testStack.popLetter(), 'B');
-		assertEquals(testStack.toString(), "A");
-
-		assertEquals(testStack.popLetter(), 'A');
-		assertEquals(testStack.toString(), "");
-
+		// Stack is expected to throw EmptyStackException during popLetter()
+		// operation as stack is empty now
 		boolean exceptionCaught = false;
 		try {
 			testStack.popLetter();
@@ -199,20 +233,27 @@ public class WordStackTest {
 	 */
 	@Test
 	public void testPeekLetter() throws InvalidGridSizeException,
-			WordStackOverflowException {
-		WordStack testStack = new WordStack(this.wordLimit);
+			WordStackOverflowException, InvalidStackOperationException {
+		WordStack testStack = this.genSmallStack();
+		int wordLimit = testStack.getWordLimit();
+		char letter = this.genRandomChar();
+		String targetWord = "";
 
-		testStack.pushLetter('A');
-		testStack.pushLetter('B');
-		testStack.pushLetter('C');
-		assertEquals(testStack.peekLetter(), 'C');
+		// Populating stack
+		for (int index = 0; index < wordLimit; index++) {
+			testStack.pushLetter(letter);
+			targetWord += letter;
+		}
 
-		testStack.popLetter();
-		assertEquals(testStack.peekLetter(), 'B');
-		testStack.popLetter();
-		assertEquals(testStack.peekLetter(), 'A');
-		testStack.popLetter();
+		// Emptying stack, and checking peekLetter()
+		for (int index = wordLimit - 1; index >= 0; index--) {
 
+			assertEquals(testStack.peekLetter(), targetWord.charAt(index));
+			testStack.popLetter();
+		}
+
+		// Stack is empty now.
+		// Checking if next peekLetter() call throws EmptyStackException
 		boolean exceptionCaught = false;
 		try {
 			testStack.peekLetter();
@@ -233,16 +274,49 @@ public class WordStackTest {
 	 */
 	@Test
 	public void testToString() throws InvalidGridSizeException,
-			WordStackOverflowException {
-		WordStack testStack = new WordStack(this.wordLimit);
-		testStack.pushLetter('A');
-		testStack.pushLetter('B');
-		testStack.pushLetter('C');
-		assertEquals(testStack.toString(), "ABC");
+			WordStackOverflowException, InvalidStackOperationException {
 
-		testStack.popLetter();
-		assertEquals(testStack.toString(), "AB");
+		WordStack testStack = this.genSmallStack();
+		int wordLimit = testStack.getWordLimit();
+		char letter = this.genRandomChar();
+		String targetWord = "";
+
+		// Populating stack and checking toString()
+		for (int index = 0; index < wordLimit; index++) {
+			testStack.pushLetter(letter);
+			targetWord += letter;
+			assertEquals(testStack.toString(), targetWord);
+		}
+
+		// Emptying stack and checking toString()
+		for (int index = 1; index <= wordLimit; index++) {
+			testStack.popLetter();
+			assertEquals(testStack.toString(), targetWord.substring(0,
+					targetWord.length() - index));
+		}
 
 	}
 
+	/*
+	 * Tests the getWordLimit() method
+	 */
+	@Test
+	public void testGetWordLimit() throws InvalidGridSizeException {
+		WordStack testStack = new WordStack(this.wordLimit);
+		assertTrue(testStack.getWordLimit() == this.wordLimit);
+	}
+
+	// Generates a small WordStack for testing
+	private WordStack genSmallStack() throws InvalidGridSizeException {
+		Random rand = new Random();
+
+		int smallWordLimit;
+		do {
+			smallWordLimit = rand.nextInt(1000);
+		} while (smallWordLimit <= 1);
+
+		// Testing pushLetter by pushing a random number of letters
+		WordStack testStack = new WordStack(smallWordLimit);
+		return testStack;
+	}
 }

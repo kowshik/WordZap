@@ -27,14 +27,26 @@ public class LetterGrid {
 		}
 	}
 
+	public int getRowLimit() {
+		return this.numRows;
+	}
+
+	public int getColLimit() {
+		return this.numCols;
+	}
+
 	public void putLetter(char letter) throws WordStackOverflowException,
-			EmptyStackException, InvalidGridSizeException {
+			InvalidStackOperationException {
+
 		if (stackOfWords.empty()) {
 			this.addNewStack(letter);
 
 		} else {
 			WordStack latestWordStack = stackOfWords.peek();
 			if (latestWordStack.isWordComplete()) {
+				if (stackOfWords.size() == this.getRowLimit()) {
+					throw new WordStackOverflowException(letter, this.getRowLimit());
+				}
 				this.addNewStack(letter);
 			} else {
 				latestWordStack.pushLetter(letter);
@@ -42,23 +54,35 @@ public class LetterGrid {
 		}
 	}
 
-	public void addNewStack(char letter) throws WordStackOverflowException, InvalidGridSizeException {
-		WordStack aNewStack = new WordStack(numCols);
-		aNewStack.pushLetter(letter);
-		stackOfWords.push(aNewStack);
+	private void addNewStack(char letter) throws WordStackOverflowException,
+			InvalidStackOperationException {
+		WordStack aNewStack;
+		try {
+			aNewStack = new WordStack(numCols);
+			aNewStack.pushLetter(letter);
+			stackOfWords.push(aNewStack);
+		} catch (InvalidGridSizeException ex) {
+
+		}
+
 	}
 
-	public char popLetter() throws EmptyStackException {
+	public char popLetter() throws EmptyStackException,
+			InvalidStackOperationException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		return stackAtTheTop.popLetter();
 	}
 
-	public String getTopWord() throws EmptyStackException {
+	public char peekLetter() throws EmptyStackException {
+		WordStack stackAtTheTop = stackOfWords.peek();
+		return stackAtTheTop.peekLetter();
+	}
+
+	public String getWordAtTop() throws EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		return stackAtTheTop.toString();
 	}
 
-	
 	public List<String> getWordList() {
 		List<String> wordList = new Vector<String>();
 		for (WordStack aWordStack : stackOfWords) {
@@ -72,9 +96,22 @@ public class LetterGrid {
 		stackOfWords = new Stack<WordStack>();
 	}
 
-	public boolean endWord() {
+	public void lockWordAtTop() throws InvalidStackOperationException,
+			EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
-		return stackAtTheTop.lockWord();
+		stackAtTheTop.lockWord();
 
+	}
+
+	public void unlockWordAtTop() throws EmptyStackException {
+		WordStack stackAtTheTop = stackOfWords.peek();
+		stackAtTheTop.unlockWord();
+
+	}
+
+	public String removeWordAtTop() throws EmptyStackException,
+			InvalidStackOperationException {
+		
+		return stackOfWords.pop().toString();
 	}
 }

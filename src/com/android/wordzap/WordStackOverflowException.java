@@ -13,7 +13,7 @@ public class WordStackOverflowException extends Exception {
 	}
 	
 	public String toString(){
-		return "WordStack exceeded word limit : "+wordLimit+" during addition of letter : "+letter;
+		return "Stack exceeded limit : "+wordLimit+" during addition of letter : "+letter;
 	}
 
 }
