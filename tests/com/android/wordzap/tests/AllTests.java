@@ -1,3 +1,11 @@
+/**
+ * 
+ * @author Kowshik Prakasam
+ * 
+ * JUnit 4 Test Driver
+ * Add all your test classes here
+ * 
+ */
 package com.android.wordzap.tests;
 
 import org.junit.runner.RunWith;

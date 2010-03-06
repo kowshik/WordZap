@@ -1,9 +1,12 @@
 /**
+ * 
  * @author Kowshik Prakasam
+ * 
  * class WordStack models a stack of letters that form a single word on the visual grid for the human player
  * This class is put to use inside class LetterGrid that maintains a stack of WordStacks, with each WordStack representing a word on the visual grid
  * The interface to this class includes methods to lock / unlock a full word, indicating completion of the word
  * Also monitors the size of the internal stack of letters, and never allows it to exceed the specified limit in the constructor
+ * 
  */
 
 package com.android.wordzap;

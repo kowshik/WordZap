@@ -1,3 +1,12 @@
+/**
+ * 
+ * @author Kowshik Prakasam
+ * 
+ * JUnit Test Cases for class LetterGrid
+ * 
+ */
+
+
 package com.android.wordzap.tests;
 
 import static org.junit.Assert.*;

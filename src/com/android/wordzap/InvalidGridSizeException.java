@@ -1,3 +1,11 @@
+/**
+ * 
+ * @author Kowshik Prakasam
+ * 
+ * This exception is thrown when class LetterGrid is initialised with invalid size
+ * 
+ */
+
 package com.android.wordzap;
 
 public class InvalidGridSizeException extends Exception {
@@ -10,7 +18,7 @@ public class InvalidGridSizeException extends Exception {
 	}
 
 	public String toString() {
-		String message="";
+		String message = "";
 		if (numRows < 0 || numCols < 0) {
 			message = "Letter grid size cannot have negative dimensions";
 			if (numRows < 0) {

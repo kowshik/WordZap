@@ -1,3 +1,12 @@
+/**
+ * 
+ * @author Kowshik Prakasam
+ * 
+ * JUnit Test Cases for class InvalidGridSizeException
+ * 
+ */
+
+
 package com.android.wordzap.tests;
 
 import static org.junit.Assert.*;
