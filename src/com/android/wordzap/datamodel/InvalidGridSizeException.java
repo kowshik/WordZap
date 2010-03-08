@@ -6,7 +6,7 @@
  * 
  */
 
-package com.android.wordzap;
+package com.android.wordzap.datamodel;
 
 public class InvalidGridSizeException extends Exception {
 	private int numRows;

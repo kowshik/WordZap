@@ -9,7 +9,7 @@
  * 
  */
 
-package com.android.wordzap;
+package com.android.wordzap.datamodel;
 
 import java.util.EmptyStackException;
 import java.util.Iterator;

@@ -17,10 +17,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.android.wordzap.InvalidGridSizeException;
-import com.android.wordzap.InvalidStackOperationException;
-import com.android.wordzap.WordStack;
-import com.android.wordzap.WordStackOverflowException;
+import com.android.wordzap.datamodel.InvalidGridSizeException;
+import com.android.wordzap.datamodel.InvalidStackOperationException;
+import com.android.wordzap.datamodel.WordStack;
+import com.android.wordzap.datamodel.WordStackOverflowException;
 
 public class WordStackTest {
 
