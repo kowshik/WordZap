@@ -11,7 +11,9 @@
 package com.android.wordzap;
 
 import java.util.EmptyStackException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -19,6 +21,9 @@ public class LetterGrid {
 	private int numRows;
 	private int numCols;
 	private Stack<WordStack> stackOfWords;
+	public static final String ROW_KEY = "row";
+	public static final String COL_KEY = "col";
+	public static final String LETTER_KEY = "letter";
 
 	/*
 	 * Negative numRows and numCols cause constructor to throw appropriate
@@ -54,14 +59,29 @@ public class LetterGrid {
 	 * Note that you need to call unlockWordAtTop() before you can push / pop
 	 * letters.
 	 * 
+	 * Returns a Map< String, String > object with information about which row
+	 * and col to which the letter was pushed. The Map< String, String > object
+	 * will have the following key - value pairs
+	 * 
+	 * 
+	 * Key : LetterGrid.ROW_KEY Value : Row to which the letter was pushed in
+	 * the grid
+	 * 
+	 * 
+	 * Key : LetterGrid.COL_KEY Value : Col to which the letter was pushed in
+	 * the grid
+	 * 
+	 * Key : LetterGrid.LETTER_KEY Value : Letter which was pushed
+	 * 
 	 * Throws WordStackOverflowException : if letter grid overflows.
 	 * 
 	 * Throws InvalidStackOperationException : if word at top of stack is
 	 * locked.
 	 */
-	public void putLetter(char letter) throws WordStackOverflowException,
-			InvalidStackOperationException {
-
+	public Map< String, String > putLetter(char letter)
+			throws WordStackOverflowException, InvalidStackOperationException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(this.LETTER_KEY, "" + letter);
 		if (stackOfWords.empty()) {
 			this.addNewStack(letter);
 
@@ -77,6 +97,11 @@ public class LetterGrid {
 				latestWordStack.pushLetter(letter);
 			}
 		}
+
+		map.put(this.ROW_KEY, "" + (stackOfWords.size() - 1));
+		map.put(this.COL_KEY, "" + (stackOfWords.peek().size() - 1));
+		return map;
+
 	}
 
 	/*
@@ -101,26 +126,62 @@ public class LetterGrid {
 	 * Note that you need to call unlockWordAtTop() before you can push / pop
 	 * letters.
 	 * 
+	 * Returns a Map< String, String > object with information about which row
+	 * and col from which the letter was popped. The Map< String, String >
+	 * object will have the following key - value pairs
+	 * 
+	 * 
+	 * Key : LetterGrid.ROW_KEY Value : Row to which the letter was popped in
+	 * the grid
+	 * 
+	 * 
+	 * Key : LetterGrid.COL_KEY Value : Col to which the letter was popped in
+	 * the grid
+	 * 
+	 * Key : LetterGrid.LETTER_KEY Value : Letter which was popped
+	 * 
 	 * Throws EmptyStackException : if grid is empty, or stack at the top of the
 	 * grid is empty.
 	 * 
 	 * Throws InvalidStackOperationException : if stack at the top of the grid
 	 * is locked.
 	 */
-	public char popLetter() throws EmptyStackException,
+	public Map< String, String > popLetter() throws EmptyStackException,
 			InvalidStackOperationException {
 		WordStack stackAtTheTop = stackOfWords.peek();
-		return stackAtTheTop.popLetter();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(this.LETTER_KEY, String.valueOf(stackAtTheTop.popLetter()));
+		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size()-1));
+		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size()));
+		return map;
 	}
 
 	/*
 	 * Returns letter from top of grid.
 	 * 
+	 * Returns a Map< String, String > object with information about which row
+	 * and col from which the letter was peeked at. The Map< String, String >
+	 * object will have the following key - value pairs
+	 * 
+	 * 
+	 * Key : LetterGrid.ROW_KEY Value : Row to which the letter was peeked at in
+	 * the grid
+	 * 
+	 * 
+	 * Key : LetterGrid.COL_KEY Value : Col to which the letter was peeked at in
+	 * the grid
+	 * 
+	 * Key : LetterGrid.LETTER_KEY Value : Letter which was peeked at.
+	 *  
 	 * Throws EmptyStackException : if grid is empty.
 	 */
-	public char peekLetter() throws EmptyStackException {
+	public Map< String, String > peekLetter() throws EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
-		return stackAtTheTop.peekLetter();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(this.LETTER_KEY, String.valueOf(stackAtTheTop.peekLetter()));
+		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size()-1));
+		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size()-1));
+		return map;
 	}
 
 	/*
@@ -136,8 +197,8 @@ public class LetterGrid {
 	/*
 	 * Returns List representation of words internally stored in the grid
 	 */
-	public List<String> getWordList() {
-		List<String> wordList = new Vector<String>();
+	public List< String > getWordList() {
+		List< String > wordList = new Vector<String>();
 		for (WordStack aWordStack : stackOfWords) {
 			wordList.add(aWordStack.toString());
 		}
@@ -181,8 +242,12 @@ public class LetterGrid {
 
 	}
 
-	public String removeWordAtTop() throws EmptyStackException,
-			InvalidStackOperationException {
+	/*
+	 * Removes word at the top of the grid
+	 * 
+	 * Throws EmptyStackException : if grid is empty
+	 */
+	public String removeWordAtTop() throws EmptyStackException {
 
 		return stackOfWords.pop().toString();
 	}

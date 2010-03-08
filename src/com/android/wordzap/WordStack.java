@@ -52,7 +52,8 @@ public class WordStack extends Stack<Character> {
 	}
 
 	/*
-	 * Locks the word. Throws InvalidOperationException if word is locked when size is zero
+	 * Locks the word. Throws InvalidOperationException if word is locked when
+	 * size is zero
 	 */
 	public void lockWord() throws InvalidStackOperationException {
 		if (this.size() == 0) {
@@ -71,10 +72,13 @@ public class WordStack extends Stack<Character> {
 	}
 
 	/*
-	 * Pushes a letter into the internal stack of letters Returns true if
-	 * successful, else returns false if word is already completed (locked)
-	 * Throws WordStackOverflowException if word is not completed (locked), and
-	 * stack limit has been reached
+	 * Pushes a letter into the internal stack of letters.
+	 * 
+	 * 
+	 * Throws WordStackOverflowException : if stack limit is breached
+	 * 
+	 * Throws InvalidStackOperationException : if word is locked
+	 * 
 	 */
 	public void pushLetter(char letter) throws WordStackOverflowException,
 			InvalidStackOperationException {

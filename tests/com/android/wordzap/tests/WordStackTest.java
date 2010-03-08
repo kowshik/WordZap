@@ -150,7 +150,6 @@ public class WordStackTest {
 		for (int index = 0; index < testStack.getWordLimit() - 1; index++) {
 			testStack.pushLetter(letter);
 			targetWord += letter;
-			assertEquals(testStack.toString(), targetWord);
 		}
 
 		// Checking if pushLetter throws InvalidOperationException when you push
@@ -175,6 +174,8 @@ public class WordStackTest {
 		testStack.pushLetter(letter);
 		targetWord += letter;
 		assertEquals(testStack.toString(), targetWord);
+		
+		//Checking if stack limit is exceeded 
 		exceptionCaught = false;
 		try {
 			testStack.pushLetter('G');
