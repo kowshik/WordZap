@@ -31,7 +31,7 @@ public class LetterButtonListener implements OnClickListener {
 		Button letterButton = (Button) v;
 		try {
 			// Update the grid
-			theGameScreen.updateGrid(letterButton.getText().charAt(0));
+			theGameScreen.pushToVisualGrid(letterButton);
 
 			/*
 			 * Kill this button temporarily It cannot be reused by the human

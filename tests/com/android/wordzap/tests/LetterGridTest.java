@@ -6,7 +6,6 @@
  * 
  */
 
-
 package com.android.wordzap.tests;
 
 import static org.junit.Assert.*;
@@ -154,8 +153,9 @@ public class LetterGridTest {
 	 * Tests for putLetter() method
 	 */
 	@Test
-	public void testPutLetter() throws InvalidGridSizeException,
-			WordStackOverflowException, InvalidStackOperationException {
+	public void testPutLetterAndIsWordLockedAtTop()
+			throws InvalidGridSizeException, WordStackOverflowException,
+			InvalidStackOperationException {
 
 		LetterGrid testGrid = this.genSmallGrid();
 		int randSmallRows = testGrid.getRowLimit();
@@ -175,13 +175,16 @@ public class LetterGridTest {
 
 			for (int colIndex = 0; colIndex < randWordLimit; colIndex++) {
 
-				Map< String, String > map=testGrid.putLetter(testLetter);
+				Map<String, String> map = testGrid.putLetter(testLetter);
 				targetWord += testLetter;
-				assertEquals(Integer.parseInt(map.get(LetterGrid.ROW_KEY)), rowIndex);
-				assertEquals(Integer.parseInt(map.get(LetterGrid.COL_KEY)), targetWord.length()-1);
-				
+				assertEquals(Integer.parseInt(map.get(LetterGrid.ROW_KEY)),
+						rowIndex);
+				assertEquals(Integer.parseInt(map.get(LetterGrid.COL_KEY)),
+						targetWord.length() - 1);
+
 			}
 			testGrid.lockWordAtTop();
+			assertTrue(testGrid.isWordLockedAtTop());
 			assertEquals(testGrid.getWordAtTop(), targetWord);
 		}
 
@@ -215,24 +218,28 @@ public class LetterGridTest {
 		 * fine for each row.
 		 */
 		boolean exceptionCaught = false;
-		for (int rowIndex = numRows-1; rowIndex >= 0; rowIndex--) {
+		for (int rowIndex = numRows - 1; rowIndex >= 0; rowIndex--) {
 			String wordAtTop = testGrid.getWordAtTop();
 			testGrid.unlockWordAtTop();
 			for (int colIndex = numCols - 1; colIndex >= 0; colIndex--) {
-				
-				Map< String, String >  peekMap=testGrid.peekLetter();
-				Map< String, String > popMap=testGrid.popLetter();
+
+				Map<String, String> peekMap = testGrid.peekLetter();
+				Map<String, String> popMap = testGrid.popLetter();
 				char letterAtTop = peekMap.get(LetterGrid.LETTER_KEY).charAt(0);
 				char poppedLetter = popMap.get(LetterGrid.LETTER_KEY).charAt(0);
-				
-				assertEquals(Integer.parseInt(popMap.get(LetterGrid.ROW_KEY)),rowIndex);
-				assertEquals(Integer.parseInt(popMap.get(LetterGrid.COL_KEY)),colIndex);
+
+				assertEquals(Integer.parseInt(popMap.get(LetterGrid.ROW_KEY)),
+						rowIndex);
+				assertEquals(Integer.parseInt(popMap.get(LetterGrid.COL_KEY)),
+						colIndex);
 				assertEquals(poppedLetter, wordAtTop.charAt(colIndex));
-				
-				assertEquals(Integer.parseInt(peekMap.get(LetterGrid.ROW_KEY)),rowIndex);
-				assertEquals(Integer.parseInt(peekMap.get(LetterGrid.COL_KEY)),colIndex);
+
+				assertEquals(Integer.parseInt(peekMap.get(LetterGrid.ROW_KEY)),
+						rowIndex);
+				assertEquals(Integer.parseInt(peekMap.get(LetterGrid.COL_KEY)),
+						colIndex);
 				assertEquals(letterAtTop, wordAtTop.charAt(colIndex));
-				
+
 				assertEquals(testGrid.getWordAtTop(), wordAtTop.substring(0,
 						colIndex));
 			}
@@ -311,7 +318,8 @@ public class LetterGridTest {
 			String poppedWord = "";
 			for (int colIndex = numCols - 1; colIndex >= 0; colIndex--) {
 
-				char poppedLetter = testGrid.popLetter().get(LetterGrid.LETTER_KEY).charAt(0);
+				char poppedLetter = testGrid.popLetter().get(
+						LetterGrid.LETTER_KEY).charAt(0);
 				poppedWord = poppedLetter + poppedWord;
 			}
 			testGrid.removeWordAtTop();

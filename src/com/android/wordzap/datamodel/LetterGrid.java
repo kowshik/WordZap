@@ -78,7 +78,7 @@ public class LetterGrid {
 	 * Throws InvalidStackOperationException : if word at top of stack is
 	 * locked.
 	 */
-	public Map< String, String > putLetter(char letter)
+	public Map<String, String> putLetter(char letter)
 			throws WordStackOverflowException, InvalidStackOperationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put(this.LETTER_KEY, "" + letter);
@@ -146,12 +146,12 @@ public class LetterGrid {
 	 * Throws InvalidStackOperationException : if stack at the top of the grid
 	 * is locked.
 	 */
-	public Map< String, String > popLetter() throws EmptyStackException,
+	public Map<String, String> popLetter() throws EmptyStackException,
 			InvalidStackOperationException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put(this.LETTER_KEY, String.valueOf(stackAtTheTop.popLetter()));
-		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size()-1));
+		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
 		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size()));
 		return map;
 	}
@@ -172,15 +172,15 @@ public class LetterGrid {
 	 * the grid
 	 * 
 	 * Key : LetterGrid.LETTER_KEY Value : Letter which was peeked at.
-	 *  
+	 * 
 	 * Throws EmptyStackException : if grid is empty.
 	 */
-	public Map< String, String > peekLetter() throws EmptyStackException {
+	public Map<String, String> peekLetter() throws EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put(this.LETTER_KEY, String.valueOf(stackAtTheTop.peekLetter()));
-		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size()-1));
-		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size()-1));
+		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
+		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size() - 1));
 		return map;
 	}
 
@@ -197,8 +197,8 @@ public class LetterGrid {
 	/*
 	 * Returns List representation of words internally stored in the grid
 	 */
-	public List< String > getWordList() {
-		List< String > wordList = new Vector<String>();
+	public List<String> getWordList() {
+		List<String> wordList = new Vector<String>();
 		for (WordStack aWordStack : stackOfWords) {
 			wordList.add(aWordStack.toString());
 		}
@@ -250,5 +250,15 @@ public class LetterGrid {
 	public String removeWordAtTop() throws EmptyStackException {
 
 		return stackOfWords.pop().toString();
+	}
+
+	
+	/*
+	 * Tells if word at top is locked
+	 * 
+	 * Throws EmptyStackException : if grid is empty
+	 */
+	public boolean isWordLockedAtTop() throws EmptyStackException {
+		return stackOfWords.peek().isWordComplete();
 	}
 }

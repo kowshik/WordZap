@@ -15,8 +15,10 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -33,7 +35,10 @@ public class GameScreen extends Activity {
 
 	// Beep sounds during special situations
 	public final static int LETTER_PRESS_BEEP = R.raw.letter_press_beep;
+	public final static int LETTER_POP_BEEP = R.raw.letter_pop_beep;
 	public final static int END_WORD_BEEP = R.raw.end_word_beep;
+
+	private static final int MIN_WORD_SIZE = 2;
 
 	// MediaPlayer object which will play the above beep sounds
 	private MediaPlayer mMediaPlayer;
@@ -59,9 +64,17 @@ public class GameScreen extends Activity {
 	// The button which ends a word
 	private Button btnEndWord;
 
-	// 2D array of TextViews that represent the visual portion of the letter
-	// grid
+	/*
+	 * 2D array of TextViews that represent the visual portion of the letter
+	 * grid
+	 */
 	private TextView[][] gridTxtViews;
+
+	/*
+	 * 2D array of Buttons that tie each TextView to the letter button that was
+	 * clicked
+	 */
+	private Button[][] gridTxtViewInputSource;
 
 	// Letter grid data model
 	private LetterGrid humanPlayerGrid;
@@ -79,15 +92,24 @@ public class GameScreen extends Activity {
 			 * for the human player
 			 */
 			gridTxtViews = new TextView[GRID_NUMROWS][GRID_NUMCOLS];
+			gridTxtViewInputSource = new Button[GRID_NUMROWS][GRID_NUMCOLS];
 			this.retrieveGridTxtViews();
 
+			/*
+			 * Init grid text view listeners
+			 */
+
+			this.initGridTxtViewListeners();
 			/*
 			 * Retrieve command buttons that help add letters to the grid and
 			 * end the word
 			 */
-			this.retrieveLetterButtons();
-			this.initLetterBtnListeners();
+			this.initCommandButtons();
+			this.initCommandButtonListeners();
 
+			/*
+			 * Init grid text view listeners
+			 */
 			// Initiate letter grid
 			this.humanPlayerGrid = new LetterGrid(this.GRID_NUMROWS,
 					this.GRID_NUMCOLS);
@@ -106,8 +128,18 @@ public class GameScreen extends Activity {
 
 	}
 
+	// Initialising grid text view listeners
+	private void initGridTxtViewListeners() {
+		for (int rowIndex = 0; rowIndex < gridTxtViews.length; rowIndex++) {
+			for (int colIndex = 0; colIndex < gridTxtViews[rowIndex].length; colIndex++) {
+				gridTxtViews[rowIndex][colIndex]
+						.setOnClickListener(new GridTextViewListener(this));
+			}
+		}
+	}
+
 	// Initialising letter buttons
-	private void initLetterBtnListeners() {
+	private void initCommandButtonListeners() {
 		this.btnTopFirst.setOnClickListener(new LetterButtonListener(this));
 		this.btnTopSecond.setOnClickListener(new LetterButtonListener(this));
 		this.btnTopThird.setOnClickListener(new LetterButtonListener(this));
@@ -123,7 +155,7 @@ public class GameScreen extends Activity {
 	}
 
 	// Retrieving letter buttons from XML resource
-	private void retrieveLetterButtons() {
+	private void initCommandButtons() {
 		this.btnTopFirst = (Button) findViewById(R.id.buttonTopFirst);
 		this.btnTopSecond = (Button) findViewById(R.id.buttonTopSecond);
 		this.btnTopThird = (Button) findViewById(R.id.buttonTopThird);
@@ -137,6 +169,10 @@ public class GameScreen extends Activity {
 				btnBotThird, btnBotFourth, btnTopFirst, btnTopSecond,
 				btnTopThird, btnTopFourth };
 		this.btnEndWord = (Button) findViewById(R.id.btnEndWord);
+
+		// End word should be disabled by default
+		this.btnEndWord.setEnabled(false);
+
 	}
 
 	/*
@@ -164,7 +200,7 @@ public class GameScreen extends Activity {
 	}
 
 	/*
-	 * Attempts to update the visual grid, and the data model with a new letter
+	 * Updates the visual grid and the data model with a new letter
 	 * 
 	 * Throws WordStackOverflowException : if the stack at the top of the letter
 	 * grid data model overflows
@@ -172,8 +208,12 @@ public class GameScreen extends Activity {
 	 * Throws InvalidStackOperationException : if locked words are manipulated,
 	 * without proper unlock operations
 	 */
-	public void updateGrid(char letter) throws WordStackOverflowException,
-			InvalidStackOperationException {
+	public void pushToVisualGrid(Button srcButton)
+			throws WordStackOverflowException, InvalidStackOperationException {
+
+		// Fetch letter from command button
+		char letter = srcButton.getText().charAt(0);
+
 		// Push to data model
 		Map<String, String> map = this.humanPlayerGrid.putLetter(letter);
 
@@ -182,7 +222,53 @@ public class GameScreen extends Activity {
 		char pushedLetter = map.get(LetterGrid.LETTER_KEY).charAt(0);
 
 		// Update the visual grid
-		gridTxtViews[row][col].setText("" + pushedLetter);
+		this.gridTxtViews[row][col].setText("" + pushedLetter);
+		this.gridTxtViewInputSource[row][col] = srcButton;
+
+		if (this.humanPlayerGrid.getWordAtTop().length() > GameScreen.MIN_WORD_SIZE) {
+			btnEndWord.setEnabled(true);
+		}
+
+	}
+
+	/*
+	 * Removes a letter for the top of the visual grid and the data model
+	 * 
+	 * Throws EmptyStackException : if the visual grid is empty
+	 * 
+	 * Throws InvalidStackOperationException : if you try to pop a letter from a
+	 * word thats already completed using 'End Word' button
+	 */
+	public void popFromVisualGrid(TextView touchedTxtView)
+			throws EmptyStackException, InvalidStackOperationException {
+		// Peek at data model
+		Map<String, String> map = this.humanPlayerGrid.peekLetter();
+		int topRow = Integer.parseInt(map.get(LetterGrid.ROW_KEY));
+		int txtViewRow = this.getTxtViewRow(touchedTxtView);
+		int txtViewCol = this.getTxtViewCol(touchedTxtView);
+
+		if (txtViewRow == topRow) {
+
+			// Pop from data model
+			map = this.humanPlayerGrid.popLetter();
+			int poppedRow = Integer.parseInt(map.get(LetterGrid.ROW_KEY));
+			int poppedCol = Integer.parseInt(map.get(LetterGrid.COL_KEY));
+
+			// Update visual grid
+			gridTxtViews[poppedRow][poppedCol].setText("");
+			gridTxtViewInputSource[poppedRow][poppedCol]
+					.setVisibility(View.VISIBLE);
+			gridTxtViewInputSource[poppedRow][poppedCol] = null;
+
+			// Remove word at top if the only unlocked letter at top of grid has
+			// been popped
+			if (poppedCol == 0) {
+				this.humanPlayerGrid.removeWordAtTop();
+			}
+			if (poppedCol == GameScreen.MIN_WORD_SIZE) {
+				this.btnEndWord.setEnabled(false);
+			}
+		}
 
 	}
 
@@ -209,8 +295,11 @@ public class GameScreen extends Activity {
 		try {
 
 			switch (beepType) {
-			case LETTER_PRESS_BEEP:
+			case GameScreen.LETTER_PRESS_BEEP:
 				mMediaPlayer = MediaPlayer.create(this, this.LETTER_PRESS_BEEP);
+				break;
+			case GameScreen.LETTER_POP_BEEP:
+				mMediaPlayer = MediaPlayer.create(this, this.LETTER_POP_BEEP);
 				break;
 			case END_WORD_BEEP:
 				mMediaPlayer = MediaPlayer.create(this, this.END_WORD_BEEP);
@@ -245,6 +334,48 @@ public class GameScreen extends Activity {
 		for (Button letterButton : this.letterButtons) {
 			letterButton.setVisibility(Button.VISIBLE);
 		}
+	}
+
+	// Returns the row for any Text View on the visual grid
+	public int getTxtViewRow(TextView aTxtView) {
+		for (int rowIndex = 0; rowIndex < gridTxtViews.length; rowIndex++) {
+			for (int colIndex = 0; colIndex < gridTxtViews[0].length; colIndex++) {
+				if (aTxtView == this.gridTxtViews[rowIndex][colIndex]) {
+					return rowIndex;
+				}
+			}
+		}
+
+		return -1;
+	}
+
+	// Returns the row for any Text View on the visual grid
+	public int getTxtViewCol(TextView aTxtView, int row) {
+		if (row > 0 && row < gridTxtViews.length) {
+			for (int colIndex = 0; colIndex < gridTxtViews[row].length; colIndex++) {
+				if (aTxtView == this.gridTxtViews[row][colIndex]) {
+					return row;
+				}
+			}
+		}
+
+		return -1;
+	}
+
+	// Returns the row for any Text View on the visual grid
+	public int getTxtViewCol(TextView aTxtView) {
+
+		int row = this.getTxtViewRow(aTxtView);
+
+		if (row > 0 && row < gridTxtViews.length) {
+			for (int colIndex = 0; colIndex < gridTxtViews[row].length; colIndex++) {
+				if (aTxtView == this.gridTxtViews[row][colIndex]) {
+					return colIndex;
+				}
+			}
+		}
+
+		return -1;
 	}
 
 }

@@ -33,6 +33,8 @@ public class EndWordListener implements OnClickListener {
 			// Make visible all letter buttons
 			// They can be used for the next word by the user
 			theGameScreen.reviveLetterButtons();
+			
+			v.setEnabled(false);
 		} catch (EmptyStackException e) {
 			// theGameScreen.beep(GameScreen.END_WORD_BEEP);
 		} catch (InvalidStackOperationException e) {
