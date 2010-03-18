@@ -15,6 +15,10 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.Stack;
 
+import com.android.wordzap.exceptions.InvalidGridSizeException;
+import com.android.wordzap.exceptions.InvalidStackOperationException;
+import com.android.wordzap.exceptions.WordStackOverflowException;
+
 public class WordStack extends Stack<Character> {
 	/*
 	 * Integer storing the maximum size of the word. Usually corresponds to the

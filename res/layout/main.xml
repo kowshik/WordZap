@@ -68,6 +68,46 @@
 		android:layout_height="60px" android:text="END WORD" android:layout_x="98px"
 		android:textStyle="bold" android:textSize="20sp" android:layout_y="207px">
 	</Button>
+	
+	<TableLayout android:id="@+id/tLayoutComputer"
+		android:layout_width="147px" android:layout_height="271px"
+		android:orientation="vertical" android:layout_x="330px"
+		android:layout_y="0px">
+
+		<TextView android:id="@+id/txtViewComp6" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+		<TextView android:id="@+id/txtViewComp5" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+		<TextView android:id="@+id/txtViewComp4" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+		<TextView android:id="@+id/txtViewComp3" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+		<TextView android:id="@+id/txtViewComp2" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+		<TextView android:id="@+id/txtViewComp1" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+		<TextView android:id="@+id/txtViewComp0" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text=""
+			android:layout_weight="0.5" android:textSize="25sp">
+		</TextView>
+
+
+	</TableLayout>
+	
+	
+	
 	<TableLayout android:id="@+id/tLayoutTxtViews0"
 		android:layout_width="147px" android:layout_height="271px"
 		android:orientation="vertical" android:layout_x="340px"
@@ -104,6 +144,10 @@
 
 
 	</TableLayout>
+	
+	
+	
+	
 	<TableLayout android:id="@+id/tLayoutTxtViews1"
 		android:layout_width="147px" android:layout_height="271px"
 		android:orientation="vertical" android:layout_x="367px"

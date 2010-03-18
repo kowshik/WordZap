@@ -16,7 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.android.wordzap.datamodel.InvalidGridSizeException;
+import com.android.wordzap.exceptions.InvalidGridSizeException;
 
 public class InvalidGridSizeExceptionTest {
 	private InvalidGridSizeException exception1;

@@ -6,7 +6,7 @@
  *
  */
 
-package com.android.wordzap.datamodel;
+package com.android.wordzap.exceptions;
 
 public class InvalidStackOperationException extends Exception {
 

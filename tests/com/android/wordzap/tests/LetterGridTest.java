@@ -21,10 +21,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.android.wordzap.datamodel.InvalidGridSizeException;
-import com.android.wordzap.datamodel.InvalidStackOperationException;
 import com.android.wordzap.datamodel.LetterGrid;
-import com.android.wordzap.datamodel.WordStackOverflowException;
+import com.android.wordzap.exceptions.InvalidGridSizeException;
+import com.android.wordzap.exceptions.InvalidStackOperationException;
+import com.android.wordzap.exceptions.WordStackOverflowException;
 
 public class LetterGridTest {
 	private int rows;

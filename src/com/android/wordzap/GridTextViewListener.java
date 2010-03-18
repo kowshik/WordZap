@@ -11,13 +11,12 @@ package com.android.wordzap;
 
 import java.util.EmptyStackException;
 
-import com.android.wordzap.datamodel.InvalidStackOperationException;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.TextView;
+
+import com.android.wordzap.exceptions.InvalidStackOperationException;
 
 public class GridTextViewListener implements OnClickListener {
 	private GameScreen theGameScreen;

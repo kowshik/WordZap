@@ -2,30 +2,37 @@
  * 
  * @author Kowshik Prakasam
  * 
- * Activity for the game screen where all the action takes place between the human player and the computer
+ * Activity class for the game screen where all the action takes place between the human player and the computer
  * 
  */
 
 package com.android.wordzap;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.EmptyStackException;
 import java.util.Map;
+import java.util.Random;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.wordzap.datamodel.InvalidGridSizeException;
-import com.android.wordzap.datamodel.InvalidStackOperationException;
+import com.android.wordzap.R.id;
 import com.android.wordzap.datamodel.LetterGrid;
-import com.android.wordzap.datamodel.WordStackOverflowException;
+import com.android.wordzap.exceptions.InvalidFreqFileException;
+import com.android.wordzap.exceptions.InvalidGridSizeException;
+import com.android.wordzap.exceptions.InvalidLevelException;
+import com.android.wordzap.exceptions.InvalidStackOperationException;
+import com.android.wordzap.exceptions.WordStackOverflowException;
 
 public class GameScreen extends Activity {
 	// Number of rows and cols in the visual grid
@@ -37,8 +44,15 @@ public class GameScreen extends Activity {
 	public final static int LETTER_PRESS_BEEP = R.raw.letter_press_beep;
 	public final static int LETTER_POP_BEEP = R.raw.letter_pop_beep;
 	public final static int END_WORD_BEEP = R.raw.end_word_beep;
-
+	
+	//English alphabet frequencies file
+	private static final int ALPHABETS_FREQ_FILE = R.raw.english_alphabets_frequencies;
+	private static final int ALPHABETS_FREQ_FILE_DELIM = R.string.english_alphabets_frequencies_delim;
+	
+	//Minimum word size allowed on the word zap screen
 	private static final int MIN_WORD_SIZE = 2;
+	private static final int START_LEVEL = LevelGenerator.MIN_LEVEL;
+	
 
 	// MediaPlayer object which will play the above beep sounds
 	private MediaPlayer mMediaPlayer;
@@ -79,6 +93,15 @@ public class GameScreen extends Activity {
 	// Letter grid data model
 	private LetterGrid humanPlayerGrid;
 
+	// Handler object for handling computer player's message interrupts
+	private Handler mainThreadHandler;
+
+	// Array of text views that indicate position of the computer player
+	private TextView[] computerPlayerTxtViews;
+
+	//Generates Word Zap levels
+	private LevelGenerator levelGen;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +110,11 @@ public class GameScreen extends Activity {
 		setContentView(R.layout.main);
 
 		try {
+			/*Initiate level generator to generate word zap levels*/
+			InputStream alphaFreqStream = this.getResources().openRawResource(GameScreen.ALPHABETS_FREQ_FILE);
+			String alphaFreqStreamDelim = this.getResources().getString(GameScreen.ALPHABETS_FREQ_FILE_DELIM);
+			this.levelGen = new LevelGenerator(alphaFreqStream,alphaFreqStreamDelim);
+	
 			/*
 			 * Retrieve all text views that represent the visual grid on screen
 			 * for the human player
@@ -104,15 +132,56 @@ public class GameScreen extends Activity {
 			 * Retrieve command buttons that help add letters to the grid and
 			 * end the word
 			 */
-			this.initCommandButtons();
+			this.initCommandButtons(this.levelGen.generateLevel(GameScreen.START_LEVEL));
 			this.initCommandButtonListeners();
 
 			/*
 			 * Init grid text view listeners
 			 */
 			// Initiate letter grid
-			this.humanPlayerGrid = new LetterGrid(this.GRID_NUMROWS,
-					this.GRID_NUMCOLS);
+			this.humanPlayerGrid = new LetterGrid(GameScreen.GRID_NUMROWS,
+					GameScreen.GRID_NUMCOLS);
+
+			/*
+			 * Initiates computer player indicator text views
+			 */
+
+			this.computerPlayerTxtViews = new TextView[GameScreen.GRID_NUMROWS];
+			this.initComputerIndicator();
+			/*
+			 * Init mainThreadHandler ! This is an important piece of code that handles
+			 * messages from computer player thread
+			 */
+
+			
+			
+			mainThreadHandler = new Handler() {
+				public void handleMessage(Message msg) {
+					
+					for(TextView txtView : computerPlayerTxtViews){
+						txtView.setText("");
+						
+					}
+
+					Random rand = new Random();
+					int randomIndicator = -1;
+					do{
+						randomIndicator = rand.nextInt(GRID_NUMROWS-1);
+						
+					}while(randomIndicator<0);
+					computerPlayerTxtViews[randomIndicator].setText("-");
+					
+				}
+
+			};
+
+			/*
+			 * Initiate computer player which runs as a separate background
+			 * thread
+			 */
+			Thread opponent = new Thread(new ComputerPlayer(humanPlayerGrid,
+					mainThreadHandler));
+			opponent.start();
 
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -124,6 +193,32 @@ public class GameScreen extends Activity {
 			e.printStackTrace();
 		} catch (InvalidGridSizeException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidFreqFileException e) {
+			e.printStackTrace();
+		} catch (InvalidLevelException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/*
+	 * Initiates indicator text views that show the position of the computer
+	 * player at run time
+	 */
+	private void initComputerIndicator() throws SecurityException,
+			NoSuchFieldException, IllegalArgumentException,
+			IllegalAccessException {
+		Class<id> idClass = R.id.class;
+		for (int rowIndex = 0; rowIndex < GameScreen.GRID_NUMROWS; rowIndex++) {
+
+			Field txtViewField = idClass.getField("txtViewComp" + rowIndex);
+			TextView aTxtView = (TextView) findViewById(txtViewField
+					.getInt(null));
+			this.computerPlayerTxtViews[rowIndex] = aTxtView;
+			aTxtView.setText("");
+
 		}
 
 	}
@@ -155,7 +250,7 @@ public class GameScreen extends Activity {
 	}
 
 	// Retrieving letter buttons from XML resource
-	private void initCommandButtons() {
+	private void initCommandButtons(char[] levelLetters) {
 		this.btnTopFirst = (Button) findViewById(R.id.buttonTopFirst);
 		this.btnTopSecond = (Button) findViewById(R.id.buttonTopSecond);
 		this.btnTopThird = (Button) findViewById(R.id.buttonTopThird);
@@ -173,6 +268,12 @@ public class GameScreen extends Activity {
 		// End word should be disabled by default
 		this.btnEndWord.setEnabled(false);
 
+		//Populate level letters
+		int index=0;
+		for(Button btn : this.letterButtons){
+			btn.setText(""+levelLetters[index]);
+			index++;
+		}
 	}
 
 	/*
@@ -184,10 +285,9 @@ public class GameScreen extends Activity {
 	private void retrieveGridTxtViews() throws SecurityException,
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
-		Class idClass = R.id.class;
-		String word = "";
-		for (int rowIndex = 0; rowIndex < this.GRID_NUMROWS; rowIndex++) {
-			for (int colIndex = 0; colIndex < this.GRID_NUMCOLS; colIndex++) {
+		Class<id> idClass = R.id.class;
+		for (int rowIndex = 0; rowIndex < GameScreen.GRID_NUMROWS; rowIndex++) {
+			for (int colIndex = 0; colIndex < GameScreen.GRID_NUMCOLS; colIndex++) {
 				Field txtViewField = idClass.getField("txtView" + rowIndex
 						+ colIndex);
 				TextView aTxtView = (TextView) findViewById(txtViewField
@@ -245,8 +345,6 @@ public class GameScreen extends Activity {
 		Map<String, String> map = this.humanPlayerGrid.peekLetter();
 		int topRow = Integer.parseInt(map.get(LetterGrid.ROW_KEY));
 		int txtViewRow = this.getTxtViewRow(touchedTxtView);
-		int txtViewCol = this.getTxtViewCol(touchedTxtView);
-
 		if (txtViewRow == topRow) {
 
 			// Pop from data model
@@ -296,13 +394,13 @@ public class GameScreen extends Activity {
 
 			switch (beepType) {
 			case GameScreen.LETTER_PRESS_BEEP:
-				mMediaPlayer = MediaPlayer.create(this, this.LETTER_PRESS_BEEP);
+				mMediaPlayer = MediaPlayer.create(this, GameScreen.LETTER_PRESS_BEEP);
 				break;
 			case GameScreen.LETTER_POP_BEEP:
-				mMediaPlayer = MediaPlayer.create(this, this.LETTER_POP_BEEP);
+				mMediaPlayer = MediaPlayer.create(this, GameScreen.LETTER_POP_BEEP);
 				break;
 			case END_WORD_BEEP:
-				mMediaPlayer = MediaPlayer.create(this, this.END_WORD_BEEP);
+				mMediaPlayer = MediaPlayer.create(this, GameScreen.END_WORD_BEEP);
 			}
 
 			mMediaPlayer.setLooping(false);

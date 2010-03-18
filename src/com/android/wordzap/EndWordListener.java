@@ -11,7 +11,7 @@ import java.util.EmptyStackException;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.android.wordzap.datamodel.InvalidStackOperationException;
+import com.android.wordzap.exceptions.InvalidStackOperationException;
 
 public class EndWordListener implements OnClickListener {
 	private final GameScreen theGameScreen;

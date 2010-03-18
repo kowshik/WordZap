@@ -7,15 +7,12 @@
 
 package com.android.wordzap;
 
-import com.android.wordzap.datamodel.InvalidStackOperationException;
-import com.android.wordzap.datamodel.LetterGrid;
-import com.android.wordzap.datamodel.WordStackOverflowException;
-
-import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.android.wordzap.exceptions.InvalidStackOperationException;
+import com.android.wordzap.exceptions.WordStackOverflowException;
 
 public class LetterButtonListener implements OnClickListener {
 

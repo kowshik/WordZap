@@ -17,6 +17,10 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
+import com.android.wordzap.exceptions.InvalidGridSizeException;
+import com.android.wordzap.exceptions.InvalidStackOperationException;
+import com.android.wordzap.exceptions.WordStackOverflowException;
+
 public class LetterGrid {
 	private int numRows;
 	private int numCols;
@@ -81,7 +85,7 @@ public class LetterGrid {
 	public Map<String, String> putLetter(char letter)
 			throws WordStackOverflowException, InvalidStackOperationException {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(this.LETTER_KEY, "" + letter);
+		map.put(LetterGrid.LETTER_KEY, "" + letter);
 		if (stackOfWords.empty()) {
 			this.addNewStack(letter);
 
@@ -98,8 +102,8 @@ public class LetterGrid {
 			}
 		}
 
-		map.put(this.ROW_KEY, "" + (stackOfWords.size() - 1));
-		map.put(this.COL_KEY, "" + (stackOfWords.peek().size() - 1));
+		map.put(LetterGrid.ROW_KEY, "" + (stackOfWords.size() - 1));
+		map.put(LetterGrid.COL_KEY, "" + (stackOfWords.peek().size() - 1));
 		return map;
 
 	}
@@ -150,9 +154,9 @@ public class LetterGrid {
 			InvalidStackOperationException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(this.LETTER_KEY, String.valueOf(stackAtTheTop.popLetter()));
-		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
-		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size()));
+		map.put(LetterGrid.LETTER_KEY, String.valueOf(stackAtTheTop.popLetter()));
+		map.put(LetterGrid.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
+		map.put(LetterGrid.COL_KEY, String.valueOf(stackAtTheTop.size()));
 		return map;
 	}
 
@@ -178,9 +182,9 @@ public class LetterGrid {
 	public Map<String, String> peekLetter() throws EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(this.LETTER_KEY, String.valueOf(stackAtTheTop.peekLetter()));
-		map.put(this.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
-		map.put(this.COL_KEY, String.valueOf(stackAtTheTop.size() - 1));
+		map.put(LetterGrid.LETTER_KEY, String.valueOf(stackAtTheTop.peekLetter()));
+		map.put(LetterGrid.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
+		map.put(LetterGrid.COL_KEY, String.valueOf(stackAtTheTop.size() - 1));
 		return map;
 	}
 
