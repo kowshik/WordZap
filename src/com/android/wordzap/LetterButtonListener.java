@@ -26,6 +26,9 @@ public class LetterButtonListener implements OnClickListener {
 
 	public void onClick(View v) {
 		Button letterButton = (Button) v;
+		
+		//Clear any existing messages
+		theGameScreen.clearErrorMessage();
 		try {
 			// Update the grid
 			theGameScreen.pushToVisualGrid(letterButton);
@@ -37,10 +40,10 @@ public class LetterButtonListener implements OnClickListener {
 			letterButton.setVisibility(View.INVISIBLE);
 		} catch (WordStackOverflowException e) {
 			// Beep if there is a runtime error
-			theGameScreen.beep(GameScreen.LETTER_PRESS_BEEP);
+			theGameScreen.beep(GameScreen.CANT_PRESS_LETTER_BEEP);
 		} catch (InvalidStackOperationException e) {
 			// Beep if there is a runtime error
-			theGameScreen.beep(GameScreen.LETTER_PRESS_BEEP);
+			theGameScreen.beep(GameScreen.CANT_PRESS_LETTER_BEEP);
 		}
 	}
 }

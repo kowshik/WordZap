@@ -2,6 +2,11 @@
 <AbsoluteLayout android:id="@+id/baseAbsoluteLayout"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android">
+	<TextView android:id="@+id/txtViewCommon"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:text="" android:layout_weight="0.5" android:textSize="20sp"
+		android:layout_x="30px" android:layout_y="8px">
+	</TextView>
 	<RelativeLayout android:id="@+id/rLayoutButtonsFirst"
 		android:layout_width="76px" android:layout_height="137px"
 		android:layout_x="0px" android:layout_y="49px">
@@ -35,7 +40,7 @@
 	<RelativeLayout android:id="@+id/rLayoutButtonsThird"
 		android:layout_width="76px" android:layout_height="137px"
 		android:layout_x="168px" android:layout_y="49px">
-		
+
 		<Button android:id="@+id/buttonTopThird" android:layout_width="75dp"
 			android:textSize="20sp" android:layout_height="wrap_content"
 			android:text="C" android:textStyle="bold"
@@ -62,52 +67,52 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true">
 		</Button>
-		
+
 	</RelativeLayout>
 	<Button android:id="@+id/btnEndWord" android:layout_width="151px"
 		android:layout_height="60px" android:text="END WORD" android:layout_x="98px"
 		android:textStyle="bold" android:textSize="20sp" android:layout_y="207px">
 	</Button>
-	
+
 	<TableLayout android:id="@+id/tLayoutComputer"
 		android:layout_width="147px" android:layout_height="271px"
 		android:orientation="vertical" android:layout_x="330px"
 		android:layout_y="0px">
 
-		<TextView android:id="@+id/txtViewComp6" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp6"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
-		<TextView android:id="@+id/txtViewComp5" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp5"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
-		<TextView android:id="@+id/txtViewComp4" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp4"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
-		<TextView android:id="@+id/txtViewComp3" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp3"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
-		<TextView android:id="@+id/txtViewComp2" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp2"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
-		<TextView android:id="@+id/txtViewComp1" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp1"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
-		<TextView android:id="@+id/txtViewComp0" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text=""
-			android:layout_weight="0.5" android:textSize="25sp">
+		<TextView android:id="@+id/txtViewComp0"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="" android:layout_weight="0.5" android:textSize="25sp">
 		</TextView>
 
 
 	</TableLayout>
-	
-	
-	
+
+
+
 	<TableLayout android:id="@+id/tLayoutTxtViews0"
 		android:layout_width="147px" android:layout_height="271px"
 		android:orientation="vertical" android:layout_x="340px"
@@ -144,10 +149,10 @@
 
 
 	</TableLayout>
-	
-	
-	
-	
+
+
+
+
 	<TableLayout android:id="@+id/tLayoutTxtViews1"
 		android:layout_width="147px" android:layout_height="271px"
 		android:orientation="vertical" android:layout_x="367px"

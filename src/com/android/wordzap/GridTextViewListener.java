@@ -25,33 +25,18 @@ public class GridTextViewListener implements OnClickListener {
 		this.theGameScreen = theGameScreen;
 	}
 
-	public boolean onTouch(View v, MotionEvent event) {
-
-		TextView touchedLetter = (TextView) v;
-
-		try {
-			theGameScreen.popFromVisualGrid(touchedLetter);
-		} catch (EmptyStackException e) {
-			theGameScreen.beep(GameScreen.LETTER_POP_BEEP);
-			e.printStackTrace();
-		} catch (InvalidStackOperationException e) {
-			theGameScreen.beep(GameScreen.LETTER_POP_BEEP);
-			e.printStackTrace();
-		}
-		return true;
-	}
-
 	public void onClick(View v) {
 		TextView clickedLetter = (TextView) v;
 
 		try {
+
+			// Clear any existing messages
+			theGameScreen.clearErrorMessage();
 			theGameScreen.popFromVisualGrid(clickedLetter);
 		} catch (EmptyStackException e) {
-			theGameScreen.beep(GameScreen.LETTER_POP_BEEP);
-			e.printStackTrace();
+			theGameScreen.beep(GameScreen.CANT_POP_LETTER_BEEP);
 		} catch (InvalidStackOperationException e) {
-			theGameScreen.beep(GameScreen.LETTER_POP_BEEP);
-			e.printStackTrace();
+			theGameScreen.beep(GameScreen.CANT_POP_LETTER_BEEP);
 		}
 	}
 

@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
+import android.util.Log;
+
+import com.android.wordzap.WordValidator;
 import com.android.wordzap.exceptions.InvalidGridSizeException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
@@ -25,6 +28,7 @@ public class LetterGrid {
 	private int numRows;
 	private int numCols;
 	private Stack<WordStack> stackOfWords;
+	private WordValidator aWordValidator;
 	public static final String ROW_KEY = "row";
 	public static final String COL_KEY = "col";
 	public static final String LETTER_KEY = "letter";
@@ -41,6 +45,36 @@ public class LetterGrid {
 		} else {
 			throw new InvalidGridSizeException(numRows, numCols);
 		}
+		this.aWordValidator = null;
+	}
+
+	/*
+	 * Negative numRows and numCols cause constructor to throw appropriate
+	 * exceptions.
+	 */
+	public LetterGrid(int numRows, int numCols,
+			final WordValidator aWordValidator) throws InvalidGridSizeException {
+		this(numRows, numCols);
+		if (aWordValidator == null) {
+			throw new NullPointerException(
+					"The validator object passed cant be null");
+		}
+		this.aWordValidator = aWordValidator;
+
+	}
+
+	// Getter for WordValidator attribute
+	public WordValidator getWordValidator() {
+		return this.aWordValidator;
+	}
+
+	// Setter for WordValidator attribute
+	public void setWordValidator(WordValidator newValidator) {
+		if (newValidator == null) {
+			throw new NullPointerException(
+					"The validator object passed cant be null");
+		}
+		this.aWordValidator = newValidator;
 	}
 
 	/*
@@ -154,7 +188,8 @@ public class LetterGrid {
 			InvalidStackOperationException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(LetterGrid.LETTER_KEY, String.valueOf(stackAtTheTop.popLetter()));
+		map.put(LetterGrid.LETTER_KEY, String
+				.valueOf(stackAtTheTop.popLetter()));
 		map.put(LetterGrid.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
 		map.put(LetterGrid.COL_KEY, String.valueOf(stackAtTheTop.size()));
 		return map;
@@ -182,7 +217,8 @@ public class LetterGrid {
 	public Map<String, String> peekLetter() throws EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(LetterGrid.LETTER_KEY, String.valueOf(stackAtTheTop.peekLetter()));
+		map.put(LetterGrid.LETTER_KEY, String.valueOf(stackAtTheTop
+				.peekLetter()));
 		map.put(LetterGrid.ROW_KEY, String.valueOf(stackOfWords.size() - 1));
 		map.put(LetterGrid.COL_KEY, String.valueOf(stackAtTheTop.size() - 1));
 		return map;
@@ -225,11 +261,15 @@ public class LetterGrid {
 	 * Throws InvalidStackOperationException : if word at top of grid is empty,
 	 * and the user attempts to lock the word.
 	 */
-	public void lockWordAtTop() throws InvalidStackOperationException,
+	public boolean lockWordAtTop() throws InvalidStackOperationException,
 			EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
-		stackAtTheTop.lockWord();
-
+		if (this.aWordValidator != null
+				&& this.aWordValidator.isWordValid(stackAtTheTop.toString())) {
+			stackAtTheTop.lockWord();
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -256,7 +296,6 @@ public class LetterGrid {
 		return stackOfWords.pop().toString();
 	}
 
-	
 	/*
 	 * Tells if word at top is locked
 	 * 
@@ -264,5 +303,18 @@ public class LetterGrid {
 	 */
 	public boolean isWordLockedAtTop() throws EmptyStackException {
 		return stackOfWords.peek().isWordComplete();
+	}
+
+	/*
+	 * Tells if the grid contains the specified word
+	 */
+	public boolean containsWord(String word) {
+		for (WordStack aWordStack : stackOfWords) {
+			if (aWordStack.isWordComplete()
+					&& aWordStack.toString().equals(word)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

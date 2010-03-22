@@ -287,7 +287,7 @@ public class LevelGenerator {
 	 * 1 is incorrect.
 	 */
 
-	public LevelGenerator(InputStream freqFileStream, String delimiter)
+	public LevelGenerator(final InputStream freqFileStream, String delimiter)
 			throws IOException, InvalidFreqFileException {
 
 		this(new InputStreamReader(freqFileStream), delimiter);
