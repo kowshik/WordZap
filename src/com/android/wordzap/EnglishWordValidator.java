@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -115,7 +114,6 @@ public class EnglishWordValidator implements WordValidator {
 				}
 			}
 		}
-		//System.out.println(wordListsHash);
 		return wordListsHash;
 	}
 
@@ -147,25 +145,15 @@ public class EnglishWordValidator implements WordValidator {
 	private boolean isWordSubset(final List<Character> charSet, String word) {
 		int index = 0;
 		List<Character> charSetTmp = new LinkedList<Character>(charSet);
-		//System.out.println("isWordSubset : charSet - " + charSet + ", word - "+ word);
 				
 		for (char alphabet : word.toCharArray()) {
 			if (charSet.isEmpty() || !charSet.contains(alphabet)) {
-				//System.out.println("false");
 				return false;
 			}
 			charSetTmp.remove(new Character(alphabet));
 			word = word.substring(1, word.length());
 			index++;
 		}
-		//System.out.println("true");
 		return true;
 	}
-
-//	public static void main(String[] args) throws IOException {
-//		StringReader rdr = new StringReader("test\na\nb\nc\ndef");
-//		char[] charSet = { 't', 'e', 's', 't', 'a' };
-//		WordValidator aValidator = new EnglishWordValidator(rdr, charSet);
-//		System.out.println(aValidator.isWordValid("aa"));
-//	}
 }

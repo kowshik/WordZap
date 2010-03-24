@@ -3,6 +3,7 @@
  * @author Kowshik Prakasam
  * 
  * Activity class for the game screen where all the action takes place between the human player and the computer
+ * This activity is started from activity : StartScreen
  * 
  */
 
@@ -16,12 +17,12 @@ import java.util.Map;
 import java.util.Random;
 
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -57,7 +58,8 @@ public class GameScreen extends Activity {
 
 	// Minimum word size allowed on the word zap screen
 	private static final int MIN_WORD_SIZE = 2;
-	private static final int START_LEVEL = LevelGenerator.MIN_LEVEL;
+	public static final int START_LEVEL = LevelGenerator.MIN_LEVEL;
+	public static final String DIFFICULTY_PARAM_NAME = "difficulty";
 
 	// MediaPlayer object which will play the above beep sounds
 	private MediaPlayer mMediaPlayer;
@@ -89,6 +91,7 @@ public class GameScreen extends Activity {
 	 * 2D array of TextViews that represent the visual portion of the letter
 	 * grid
 	 */
+	
 	private TextView[][] gridTxtViews;
 
 	/*
@@ -113,10 +116,11 @@ public class GameScreen extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
-		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		setContentView(R.layout.main);
-
+		this.setRequestedOrientation(WordZapConstants.DEFAULT_ORIENTATION);
+		setContentView(R.layout.game_screen);
+		
 		try {
 			/* Initiate level generator to generate word zap levels */
 			InputStream alphaFreqStream = this.getResources().openRawResource(
@@ -146,16 +150,23 @@ public class GameScreen extends Activity {
 			 */
 
 			this.initGridTxtViewListeners();
+			
 			/*
-			 * Retrieve command buttons that help add letters to the grid and
-			 * end the word
+			 * Init start level and word validator
 			 */
+			int startLevel = getIntent().getIntExtra("difficulty", GameScreen.START_LEVEL);
+			Log.i(GameScreen.class.toString(),""+startLevel);
 			char[] levelChars = this.levelGen
-					.generateLevel(GameScreen.START_LEVEL);
+					.generateLevel(startLevel);
 			InputStream wordListStream = this.getResources().openRawResource(
 					GameScreen.WORD_LISTS_FILE);
 			this.validator = new EnglishWordValidator(wordListStream,
 					levelChars);
+			
+			/*
+			 * Retrieve command buttons that help add letters to the grid and
+			 * end the word
+			 */
 			this.initCommandButtons(levelChars);
 			this.initCommandButtonListeners();
 
@@ -525,6 +536,15 @@ public class GameScreen extends Activity {
 
 	public void clearErrorMessage() {
 		this.commonTxtView.setText("");
+	}
+
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	        Log.d(this.getClass().getName(), "back button pressed");
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}
 
 }

@@ -2,4 +2,6 @@
 <resources>
 	<string name="app_name">WordZap</string>
 	<string name="english_alphabets_frequencies_delim">-</string>
+	<string name="help_text">Welcome to WordZap 0.3 !\n\n- Click on 'WordZap' to start the game\n- Use \'+\' and \'-\' to select a difficulty level.\n\nHave fun !</string>
+	<string name="credits">Developed by Kowshik Prakasam\n\nkowshik@gmail.com\n\nGitHub : http://github.com/kowshik/WordZap/\n\nIf you are interested in contributing to this project, then please contact me</string>
 </resources>

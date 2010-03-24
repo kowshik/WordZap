@@ -7,7 +7,10 @@
 package com.android.wordzap.exceptions;
 
 public class DuplicateWordException extends Exception {
+	
 	public DuplicateWordException(String msg) {
 		super(msg);
 	}
+
+	
 }

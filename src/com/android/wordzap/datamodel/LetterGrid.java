@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
-import android.util.Log;
-
 import com.android.wordzap.WordValidator;
 import com.android.wordzap.exceptions.InvalidGridSizeException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
