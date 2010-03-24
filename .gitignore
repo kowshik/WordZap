@@ -1,3 +1,6 @@
 .DS_Store
 bin/com/
+bin/classes.dex
+bin/resources.ap_
+default.properties
 gen/
