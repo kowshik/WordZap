@@ -44,11 +44,11 @@
 	<h2 class="version_num">v0.3&nbsp;&nbsp;&nbsp;&nbsp;<a title="Right click, Save-as" href="http://github.com/downloads/kowshik/WordZap/WordZap-0.3.apk" ><img src="img/package_icon.png" width="53" height="48" align="center" alt="image example" /></a></h2>
 	<br>
 	<ul>
-	<li>Developed a Validator module for validation of english words against the standard <a href="http://en.wikipedia.org/wiki/SOWPODS">SOWPODS word list</a></li>
-	<li>The core data model class LetterGrid performs word validation by accepting a WordValidator object in its constructor</li>
+	<li>Developed a module for validation of english words against the standard <a href="http://en.wikipedia.org/wiki/SOWPODS">SOWPODS word list</a></li>
+	<li>The core data model (com.android.wordzap.datamodel) performs word validation by accepting a custom word validator defined by interface WordValidator in com.android.wordzap</li>
 	<li>Added a common text view above the letter command buttons in GameScreen activity which will be used to communicate messages to the human player</li>
-	<li>Developed 'LevelGenerator' module to generate levels of varying difficulty for the game</li>
-	<li>Developed skeleton code for the computer player (class ComputerPlayer)</li>
+	<li>Developed a module to generate levels of varying difficulty for the game</li>
+	<li>Developed skeleton code for the computer player</li>
 	<li>Added Start Screen which allows the user to set the difficulty level before starting the game</li>
 	<li>Activity StartScreen leads to Activity GameScreen</li>
 	</ul>
