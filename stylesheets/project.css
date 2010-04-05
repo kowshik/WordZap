@@ -60,7 +60,7 @@ pre code {
 /* Right sidebar */
 #extras {width:200px;position:absolute; left:1040px; top:170px;color:#666;}
 #extras h2.title {margin:10px 0 2px 0; color:#606060; font-size:2.6em; font-weight:400; letter-spacing:-1px; text-align:left; border-bottom:2px solid #b0b0b0;}
-#extras h2.version_text {margin:10px 0 2px 0; color:#6495ED; font-size:1.6em; font-weight:400; letter-spacing:-1px; text-align:left;}
+#extras h2.version_text {margin:10px 0 2px 0; color:#000000; font-size:1.6em; font-weight:400; letter-spacing:-1px; text-align:left;}
 #extras p {line-height:1.4em; margin: 0 0 15px 0;}
 #extras a:hover {color:#6495ED;}
 
