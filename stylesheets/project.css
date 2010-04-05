@@ -63,6 +63,7 @@ pre code {
 #extras h2.version_text {margin:10px 0 2px 0; color:#000000; font-size:1.6em; font-weight:400; letter-spacing:-1px; text-align:left;}
 #extras p {line-height:1.4em; margin: 0 0 15px 0;}
 #extras a:hover {color:#6495ED;}
+#extras a img{border-color:#e0e0e0;}
 
 /* Content area */
 #content {width:750px; height: 3200px; margin:0 0 0 240px; padding:10px 0; background:#fafafa;}
@@ -74,5 +75,4 @@ pre code {
 #content h2.version_num {margin:30px 0 0px 30px; color:#F08080; font-weight:normal; font-size:2em; letter-spacing:-2px; text-align:left;}
 #content h2.inst_heading {margin:30px 0 0px 30px; color:#F08080; font-weight:normal; font-size:1.7em; letter-spacing:-2px; text-align:left;}
 #content h2.inst_subheading {margin:30px 0 20px 50px; color:#DB7093; font-weight:normal; font-size:1.5em; letter-spacing:-1px; text-align:left;}
-
 #content h3 {margin:20px 0 10px 0; color:#d85d5d; font-weight:normal; font-size: 2em; letter-spacing:-2px;}

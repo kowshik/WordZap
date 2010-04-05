@@ -9,13 +9,18 @@
 	<title>WordZap @ GitHub</title>
 </head>
 
-<body>
+<script type="text/javascript">
+	function setHeight()
+	{
+		var content=document.getElementById('content');
+		content.style.height="1200px";
+	}
+</script>
+<body onLoad="javascript:setHeight()">
  
 <div id="wrap">
 
 <div id="leftside">
-
-	
 	<div id="menu">
 		<a href="index.html">Home</a>
 		<a class="active" href="#">Version History</a>
