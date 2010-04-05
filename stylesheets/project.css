@@ -65,7 +65,7 @@ pre code {
 #extras a:hover {color:#6495ED;}
 
 /* Content area */
-#content {width:820px; height: 2900px; margin:0 0 0 240px; padding:10px 0; background:#fafafa;}
+#content {width:800px; height: 2900px; margin:0 0 0 240px; padding:10px 0; background:#fafafa;}
 #content p {margin:30px 0 0px 30px; line-height:1.5em;font-size:1.2em;}
 #content ul {margin:0 20px 16px 75px; line-height:1.5em;font-size:1.2em;}
 #content ol {margin:0 20px 16px 40px; line-height:1.5em;font-size:1.2em;}
