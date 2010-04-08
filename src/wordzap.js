@@ -15,7 +15,6 @@ function setHeight(pageName)
 	
 	if(screen.height < minHeights[pageName])
 	{
-		alert("New size : "+minHeights[pageName]);
 		document.getElementById('content').style.height=''+minHeights[pageName]+'px';
 	}
 	else
