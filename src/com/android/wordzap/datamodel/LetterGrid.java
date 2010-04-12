@@ -1,11 +1,29 @@
 /**
- * 
+ *  
  * @author Kowshik Prakasam
  * 
- * Core class that abstracts the data model for the visual grid that the
- * human player sees on screen Offers an efficient interface to
- * manipulate the grid of letters
- * 
+ * The MIT License : http://www.opensource.org/licenses/mit-license.php
+
+ * Copyright (c) 2010 Kowshik Prakasam
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
  */
 
 package com.android.wordzap.datamodel;
@@ -21,6 +39,13 @@ import com.android.wordzap.WordValidator;
 import com.android.wordzap.exceptions.InvalidGridSizeException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
+
+/* 
+ * Core class that abstracts the data model for the visual grid that the
+ * human player sees on screen Offers an efficient interface to
+ * manipulate the grid of letters
+ * 
+ */
 
 public class LetterGrid {
 	private int numRows;

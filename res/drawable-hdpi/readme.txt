@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--   
-  @author Kowshik Prakasam
   
+  Author : Kowshik Prakasam
+  Contact : kowshik at gmail dot com
+
   The MIT License : http://www.opensource.org/licenses/mit-license.php
 
   Copyright (c) 2010 Kowshik Prakasam
@@ -23,9 +23,3 @@
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
--->
-<resources>
-   <color name="opaque_red">#f00</color>
-   <color name="translucent_red">#80ff0000</color>
-   <color name="black">#ff000000</color>
-</resources>

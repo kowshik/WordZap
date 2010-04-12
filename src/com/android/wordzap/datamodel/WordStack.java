@@ -1,12 +1,29 @@
 /**
- * 
+ *  
  * @author Kowshik Prakasam
  * 
- * class WordStack models a stack of letters that form a single word on the visual grid for the human player
- * This class is put to use inside class LetterGrid that maintains a stack of WordStacks, with each WordStack representing a word on the visual grid
- * The interface to this class includes methods to lock / unlock a full word, indicating completion of the word
- * Also monitors the size of the internal stack of letters, and never allows it to exceed the specified limit in the constructor
- * 
+ * The MIT License : http://www.opensource.org/licenses/mit-license.php
+
+ * Copyright (c) 2010 Kowshik Prakasam
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
  */
 
 package com.android.wordzap.datamodel;
@@ -19,6 +36,13 @@ import com.android.wordzap.exceptions.InvalidGridSizeException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
 
+/* 
+ * class WordStack models a stack of letters that form a single word on the visual grid for the human player
+ * This class is put to use inside class LetterGrid that maintains a stack of WordStacks, with each WordStack representing a word on the visual grid
+ * The interface to this class includes methods to lock / unlock a full word, indicating completion of the word
+ * Also monitors the size of the internal stack of letters, and never allows it to exceed the specified limit in the constructor
+ * 
+ */
 public class WordStack extends Stack<Character> {
 	/*
 	 * Integer storing the maximum size of the word. Usually corresponds to the
@@ -82,7 +106,6 @@ public class WordStack extends Stack<Character> {
 	 * Throws WordStackOverflowException : if stack limit is breached
 	 * 
 	 * Throws InvalidStackOperationException : if word is locked
-	 * 
 	 */
 	public void pushLetter(char letter) throws WordStackOverflowException,
 			InvalidStackOperationException {

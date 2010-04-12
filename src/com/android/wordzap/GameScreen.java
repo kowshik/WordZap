@@ -1,10 +1,29 @@
 /**
- * 
+ *  
  * @author Kowshik Prakasam
  * 
- * Activity class for the game screen where all the action takes place between the human player and the computer
- * This activity is started from activity : StartScreen
- * 
+ * The MIT License : http://www.opensource.org/licenses/mit-license.php
+
+ * Copyright (c) 2010 Kowshik Prakasam
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
  */
 
 package com.android.wordzap;
@@ -36,6 +55,12 @@ import com.android.wordzap.exceptions.InvalidLevelException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.InvalidWordException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
+
+/*
+ * Activity class for the game screen where all the action takes place between the human player and the computer
+ * This activity is started from activity : StartScreen
+ * 
+ */
 
 public class GameScreen extends Activity {
 	// Number of rows and cols in the visual grid
@@ -84,14 +109,14 @@ public class GameScreen extends Activity {
 
 	// The button which ends a word
 	private Button btnEndWord;
-	
-	//Common TextView where errors are posted
+
+	// Common TextView where errors are posted
 	private TextView commonTxtView;
 	/*
 	 * 2D array of TextViews that represent the visual portion of the letter
 	 * grid
 	 */
-	
+
 	private TextView[][] gridTxtViews;
 
 	/*
@@ -116,11 +141,11 @@ public class GameScreen extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		this.setRequestedOrientation(WordZapConstants.DEFAULT_ORIENTATION);
 		setContentView(R.layout.game_screen);
-		
+
 		try {
 			/* Initiate level generator to generate word zap levels */
 			InputStream alphaFreqStream = this.getResources().openRawResource(
@@ -133,8 +158,8 @@ public class GameScreen extends Activity {
 			/*
 			 * Initiate word validator that validates user's words
 			 * 
-			 * Retrieve all text views that represent the visual grid on
-			 * screen for the human player
+			 * Retrieve all text views that represent the visual grid on screen
+			 * for the human player
 			 */
 			gridTxtViews = new TextView[GRID_NUMROWS][GRID_NUMCOLS];
 			gridTxtViewInputSource = new Button[GRID_NUMROWS][GRID_NUMCOLS];
@@ -144,25 +169,25 @@ public class GameScreen extends Activity {
 			 * Retrieve all common text views where game updates are posted
 			 */
 			this.retrieveCommonTxtViews();
-			
+
 			/*
 			 * Init grid text view listeners
 			 */
 
 			this.initGridTxtViewListeners();
-			
+
 			/*
 			 * Init start level and word validator
 			 */
-			int startLevel = getIntent().getIntExtra("difficulty", GameScreen.START_LEVEL);
-			Log.i(GameScreen.class.toString(),""+startLevel);
-			char[] levelChars = this.levelGen
-					.generateLevel(startLevel);
+			int startLevel = getIntent().getIntExtra("difficulty",
+					GameScreen.START_LEVEL);
+			Log.i(GameScreen.class.toString(), "" + startLevel);
+			char[] levelChars = this.levelGen.generateLevel(startLevel);
 			InputStream wordListStream = this.getResources().openRawResource(
 					GameScreen.WORD_LISTS_FILE);
 			this.validator = new EnglishWordValidator(wordListStream,
 					levelChars);
-			
+
 			/*
 			 * Retrieve command buttons that help add letters to the grid and
 			 * end the word
@@ -175,7 +200,7 @@ public class GameScreen extends Activity {
 			 */
 			// Initiate letter grid
 			this.humanPlayerGrid = new LetterGrid(GameScreen.GRID_NUMROWS,
-					GameScreen.GRID_NUMCOLS,this.validator);
+					GameScreen.GRID_NUMCOLS, this.validator);
 
 			/*
 			 * Initiates computer player indicator text views
@@ -417,15 +442,20 @@ public class GameScreen extends Activity {
 	 * passed to WordValidator object.
 	 */
 	public void endWord() throws EmptyStackException,
-			InvalidStackOperationException, DuplicateWordException, InvalidWordException {
-		
-		if(this.humanPlayerGrid.containsWord(this.humanPlayerGrid.getWordAtTop())){
-			throw new DuplicateWordException("'"+this.humanPlayerGrid.getWordAtTop()+"' already exists");
+			InvalidStackOperationException, DuplicateWordException,
+			InvalidWordException {
+
+		if (this.humanPlayerGrid.containsWord(this.humanPlayerGrid
+				.getWordAtTop())) {
+			throw new DuplicateWordException("'"
+					+ this.humanPlayerGrid.getWordAtTop() + "' already exists");
 		}
-		if(!this.humanPlayerGrid.lockWordAtTop()) {
-			throw new InvalidWordException("'"+this.humanPlayerGrid.getWordAtTop()+"' is not a valid word");
+		if (!this.humanPlayerGrid.lockWordAtTop()) {
+			throw new InvalidWordException("'"
+					+ this.humanPlayerGrid.getWordAtTop()
+					+ "' is not a valid word");
 		}
-		 
+
 	}
 
 	/*
@@ -480,9 +510,10 @@ public class GameScreen extends Activity {
 	/*
 	 * Displays error message on a common text view
 	 */
-	public void displayErrorMessage(String msg){
+	public void displayErrorMessage(String msg) {
 		this.commonTxtView.setText(msg);
 	}
+
 	/*
 	 * Sets all letter butons to visible again
 	 */
@@ -538,13 +569,12 @@ public class GameScreen extends Activity {
 		this.commonTxtView.setText("");
 	}
 
-	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-	        Log.d(this.getClass().getName(), "back button pressed");
-	    }
-	    return super.onKeyDown(keyCode, event);
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			Log.d(this.getClass().getName(), "back button pressed");
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }
