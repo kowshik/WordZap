@@ -5,9 +5,9 @@ function setHeight(pageName)
 	var minHeights = new Array();
 	
 	minHeights['home']=690;
-	minHeights['version_history']=690;
+	minHeights['version_history']=1090;
 	minHeights['installation']=3200;
-	minHeights['screenshots']=690;
+	minHeights['screenshots']=1050;
 	minHeights['source_code']=690;
 	minHeights['authors_contact']=690;
 	minHeights['contribute']=690;
