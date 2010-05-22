@@ -29,14 +29,12 @@
 package com.android.wordzap.exceptions;
 
 /*
- * Exception used to represent an invalid 'Word Zap' level
+ * Exception used to represent an invalid 'Word Zap' level presented to a human player
  */
 
 public class InvalidLevelException extends Exception {
 
-	
-
-	public InvalidLevelException(String msg){
+	public InvalidLevelException(String msg) {
 		super(msg);
 	}
 }

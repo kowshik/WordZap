@@ -45,6 +45,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import com.android.wordzap.exceptions.InvalidCpuDescriptionException;
 import com.android.wordzap.exceptions.InvalidFreqFileException;
 import com.android.wordzap.exceptions.InvalidLevelException;
 
@@ -106,10 +107,30 @@ public class LevelGenerator {
 			false, true, false, true, false, true, false, true, false, true,
 			false, true, false, true, false, false, false, false };
 
+	private static final int[] cpuMoveTimeIntervals = { 100, 90, 85, 80, 75,
+			70, 65, 60, 55, 53, 50, 45, 45, 45, 45, 45, 45, 40, 40, 40, 40, 40,
+			40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 35, 35, 35, 35, 35,
+			35, 35, 30, 30, 30, 30, 30, 30, 30, 30, 25, 25, 25, 25 };
+
+	private static final int[] cpuMoveFrequencies = { 1, 1, 1, 3, 2, 2, 2, 2,
+			2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+			4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+
+	private static final int[] cpuZapTimeIntervals = { 300, 294, 288, 282, 276,
+			270, 264, 258, 252, 246, 240, 234, 228, 222, 216, 210, 204, 198,
+			192, 186, 180, 174, 168, 162, 156, 150, 144, 138, 132, 126, 120,
+			114, 108, 102, 96, 90, 84, 78, 72, 66, 60, 54, 48, 42, 36, 30, 30,
+			30, 30, 30, 30, 30, 30 };
+
+	private static final int[] cpuZapFrequencies = { 1, 2, 2, 3, 3, 3, 3, 4, 4,
+			4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 9, 9, 9, 9,
+			9, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
+			13, 13, 13, 13, 13 };
+
 	private SortedMap<Character, Double> freqSortedConsonants;
 	private List<List<Character>> levelConsonantTiers;
 
-	private Level[] allLevels;
+	private HumanLevelDescriptor[] allLevelDescriptors;
 
 	// Comparator for sorting vowels and consonants based on frequency
 	private class ValueSorter<K, V> implements Comparator<K> {
@@ -163,7 +184,8 @@ public class LevelGenerator {
 	 * between LevelGenerator.MIN_LEVEL and LevelGenerator.MAX_LEVEL
 	 */
 
-	public char[] generateLevel(int level) throws InvalidLevelException {
+	public Level generateLevel(int level) throws InvalidLevelException,
+			InvalidCpuDescriptionException {
 
 		if (level < LevelGenerator.MIN_LEVEL
 				|| level > LevelGenerator.MAX_LEVEL) {
@@ -173,7 +195,12 @@ public class LevelGenerator {
 
 		// Fetching the required level
 		level--;
-		Level thisLevel = allLevels[level];
+		HumanLevelDescriptor thisLevel = allLevelDescriptors[level];
+
+		CpuDescriptor thisCpuLevel = new CpuDescriptor(
+				cpuMoveTimeIntervals[level], cpuMoveFrequencies[level],
+				cpuZapTimeIntervals[level], cpuZapFrequencies[level]);
+
 		int numLevelVowels = thisLevel.getNumberOfVowels();
 
 		Random rand = new Random();
@@ -256,7 +283,7 @@ public class LevelGenerator {
 			index++;
 		}
 
-		return levelAlphabets;
+		return new Level(levelAlphabets,thisCpuLevel);
 	}
 
 	/*
@@ -402,7 +429,7 @@ public class LevelGenerator {
 		}
 
 		// Initiating array of Levels
-		this.allLevels = new Level[MAX_LEVEL];
+		this.allLevelDescriptors = new HumanLevelDescriptor[MAX_LEVEL];
 
 		// Generating all levels here
 		for (int levelIndex = LevelGenerator.MIN_LEVEL - 1; levelIndex < LevelGenerator.MAX_LEVEL; levelIndex++) {
@@ -412,7 +439,7 @@ public class LevelGenerator {
 
 			}
 			try {
-				this.allLevels[levelIndex] = new Level(
+				this.allLevelDescriptors[levelIndex] = new HumanLevelDescriptor(
 						numVowelsInLevels[levelIndex], levelConsonantTierNum,
 						pluralsAllowed[levelIndex]);
 			} catch (InvalidLevelException e) {

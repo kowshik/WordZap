@@ -1,7 +1,7 @@
 /**
- * 
- * * @author Kowshik Prakasam
  *  
+ * @author Kowshik Prakasam
+ * 
  * The MIT License : http://www.opensource.org/licenses/mit-license.php
 
  * Copyright (c) 2010 Kowshik Prakasam
@@ -26,43 +26,17 @@
  *
  */
 
-package com.android.wordzap;
-
-import com.android.wordzap.exceptions.InvalidLevelException;
+package com.android.wordzap.exceptions;
 
 /*
- * 
- * Captures the following details about any generated level :
- * 
- * (1) alphabets - List of alphabets presented to the human player
- * (2) cpu descriptor - Configuration of CPU (opposite player) for this level. Higher levels will have tougher opposite players.
- * 
+ * Exception used to represent an invalid cpu description for a 'Word Zap' level
  */
 
-public class Level {
+public class InvalidCpuDescriptionException extends Exception {
 
-	private char[] alphabets;
-	private CpuDescriptor aCpuDescriptor;
+	
 
-	public char[] getAlphabets() {
-		return alphabets;
+	public InvalidCpuDescriptionException(String msg){
+		super(msg);
 	}
-
-	public void setAlphabets(char[] alphabets) {
-		this.alphabets = alphabets;
-	}
-
-	public CpuDescriptor getaCpuDescriptor() {
-		return aCpuDescriptor;
-	}
-
-	public void setaCpuDescriptor(CpuDescriptor aCpuDescriptor) {
-		this.aCpuDescriptor = aCpuDescriptor;
-	}
-
-	public Level(char[] alphabets, CpuDescriptor aCpuDescriptor) {
-		this.alphabets = alphabets.clone();
-		this.aCpuDescriptor = (CpuDescriptor) aCpuDescriptor.clone();
-	}
-
 }

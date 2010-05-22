@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.android.wordzap.R.id;
 import com.android.wordzap.datamodel.LetterGrid;
 import com.android.wordzap.exceptions.DuplicateWordException;
+import com.android.wordzap.exceptions.InvalidCpuDescriptionException;
 import com.android.wordzap.exceptions.InvalidFreqFileException;
 import com.android.wordzap.exceptions.InvalidGridSizeException;
 import com.android.wordzap.exceptions.InvalidLevelException;
@@ -136,7 +137,7 @@ public class GameScreen extends Activity {
 
 	// Generates Word Zap levels
 	private LevelGenerator levelGen;
-	private WordValidator validator;
+	private WordCache aWordCache;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -156,7 +157,6 @@ public class GameScreen extends Activity {
 					alphaFreqStreamDelim);
 
 			/*
-			 * Initiate word validator that validates user's words
 			 * 
 			 * Retrieve all text views that represent the visual grid on screen
 			 * for the human player
@@ -177,16 +177,20 @@ public class GameScreen extends Activity {
 			this.initGridTxtViewListeners();
 
 			/*
-			 * Init start level and word validator
+			 * Init start level
 			 */
 			int startLevel = getIntent().getIntExtra("difficulty",
 					GameScreen.START_LEVEL);
 			Log.i(GameScreen.class.toString(), "" + startLevel);
-			char[] levelChars = this.levelGen.generateLevel(startLevel);
+			Level thisLevel = this.levelGen.generateLevel(startLevel);
+			char[] levelChars = thisLevel.getAlphabets();
+
+			/*
+			 * Init word cache
+			 */
 			InputStream wordListStream = this.getResources().openRawResource(
 					GameScreen.WORD_LISTS_FILE);
-			this.validator = new EnglishWordValidator(wordListStream,
-					levelChars);
+			this.aWordCache = new EnglishWordCache(wordListStream, levelChars);
 
 			/*
 			 * Retrieve command buttons that help add letters to the grid and
@@ -200,7 +204,7 @@ public class GameScreen extends Activity {
 			 */
 			// Initiate letter grid
 			this.humanPlayerGrid = new LetterGrid(GameScreen.GRID_NUMROWS,
-					GameScreen.GRID_NUMCOLS, this.validator);
+					GameScreen.GRID_NUMCOLS, this.aWordCache);
 
 			/*
 			 * Initiates computer player indicator text views
@@ -238,7 +242,7 @@ public class GameScreen extends Activity {
 			 * thread
 			 */
 			Thread opponent = new Thread(new ComputerPlayer(humanPlayerGrid,
-					mainThreadHandler));
+					aWordCache, thisLevel, mainThreadHandler));
 			opponent.start();
 
 		} catch (SecurityException e) {
@@ -256,6 +260,8 @@ public class GameScreen extends Activity {
 		} catch (InvalidFreqFileException e) {
 			e.printStackTrace();
 		} catch (InvalidLevelException e) {
+			e.printStackTrace();
+		} catch (InvalidCpuDescriptionException e) {
 			e.printStackTrace();
 		}
 
@@ -438,8 +444,8 @@ public class GameScreen extends Activity {
 	 * Throws EmptyStackException : if data model is empty
 	 * 
 	 * Throws InvalidStackOperationException : if you try to lock a word with
-	 * size zero, or an invalid word not validated by the Validator object
-	 * passed to WordValidator object.
+	 * size zero, or an invalid word not validated by the WordCache object
+	 * passed to WordCache object.
 	 */
 	public void endWord() throws EmptyStackException,
 			InvalidStackOperationException, DuplicateWordException,

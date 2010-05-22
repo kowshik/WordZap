@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
-import com.android.wordzap.WordValidator;
+import com.android.wordzap.WordCache;
 import com.android.wordzap.exceptions.InvalidGridSizeException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
@@ -51,7 +51,7 @@ public class LetterGrid {
 	private int numRows;
 	private int numCols;
 	private Stack<WordStack> stackOfWords;
-	private WordValidator aWordValidator;
+	private WordCache aWordCache;
 	public static final String ROW_KEY = "row";
 	public static final String COL_KEY = "col";
 	public static final String LETTER_KEY = "letter";
@@ -68,7 +68,7 @@ public class LetterGrid {
 		} else {
 			throw new InvalidGridSizeException(numRows, numCols);
 		}
-		this.aWordValidator = null;
+		this.aWordCache = null;
 	}
 
 	/*
@@ -76,28 +76,28 @@ public class LetterGrid {
 	 * exceptions.
 	 */
 	public LetterGrid(int numRows, int numCols,
-			final WordValidator aWordValidator) throws InvalidGridSizeException {
+			final WordCache aWordCache) throws InvalidGridSizeException {
 		this(numRows, numCols);
-		if (aWordValidator == null) {
+		if (aWordCache == null) {
 			throw new NullPointerException(
-					"The validator object passed cant be null");
+					"The cache object passed cant be null");
 		}
-		this.aWordValidator = aWordValidator;
+		this.aWordCache = aWordCache;
 
 	}
 
-	// Getter for WordValidator attribute
-	public WordValidator getWordValidator() {
-		return this.aWordValidator;
+	// Getter for WordCache attribute
+	public WordCache getWordCache() {
+		return this.aWordCache;
 	}
 
-	// Setter for WordValidator attribute
-	public void setWordValidator(WordValidator newValidator) {
-		if (newValidator == null) {
+	// Setter for WordCache attribute
+	public void setWordCache(WordCache newCache) {
+		if (newCache == null) {
 			throw new NullPointerException(
-					"The validator object passed cant be null");
+					"The cache object passed cant be null");
 		}
-		this.aWordValidator = newValidator;
+		this.aWordCache = newCache;
 	}
 
 	/*
@@ -287,8 +287,8 @@ public class LetterGrid {
 	public boolean lockWordAtTop() throws InvalidStackOperationException,
 			EmptyStackException {
 		WordStack stackAtTheTop = stackOfWords.peek();
-		if (this.aWordValidator != null
-				&& this.aWordValidator.isWordValid(stackAtTheTop.toString())) {
+		if (this.aWordCache != null
+				&& this.aWordCache.isWordValid(stackAtTheTop.toString())) {
 			stackAtTheTop.lockWord();
 			return true;
 		}

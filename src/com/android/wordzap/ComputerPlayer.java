@@ -35,26 +35,41 @@ import com.android.wordzap.datamodel.LetterGrid;
 
 public class ComputerPlayer implements Runnable {
 
-	private Handler mainThreadHandler;
-
-	public ComputerPlayer(LetterGrid humanPlayerGrid, Handler mainThreadHandler)
-			throws NullPointerException {
+	private final Handler mainThreadHandler;
+	private final LetterGrid humanPlayerGrid;
+	private final WordCache aWordCache;
+	private final Level currentLevel;
+	
+	public ComputerPlayer(LetterGrid humanPlayerGrid, WordCache aWordCache,
+			Level currentLevel, Handler mainThreadHandler) throws NullPointerException {
 
 		if (humanPlayerGrid == null) {
 			throw new NullPointerException("Human Player Grid is null.");
 		}
+		this.humanPlayerGrid = humanPlayerGrid;
 
 		if (mainThreadHandler == null) {
 			throw new NullPointerException("Main Thread Handler is null.");
 		}
 		this.mainThreadHandler = mainThreadHandler;
-
+		
+		if(aWordCache == null){
+			throw new NullPointerException("WordCache is null.");
+		}
+		this.aWordCache=aWordCache;
+		
+		if(currentLevel == null){
+			throw new NullPointerException("Level is null.");
+		}	
+		this.currentLevel=currentLevel;
+		
+		
 	}
 
 	public void run() {
-		while(true) {
+		while (true) {
 			try {
-				
+
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

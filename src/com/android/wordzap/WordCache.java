@@ -1,7 +1,7 @@
 /**
- * 
- * * @author Kowshik Prakasam
  *  
+ * @author Kowshik Prakasam
+ * 
  * The MIT License : http://www.opensource.org/licenses/mit-license.php
 
  * Copyright (c) 2010 Kowshik Prakasam
@@ -28,41 +28,22 @@
 
 package com.android.wordzap;
 
-import com.android.wordzap.exceptions.InvalidLevelException;
+import java.util.List;
 
-/*
+/* 
+ * Interface to be implemented by any WordCache
  * 
- * Captures the following details about any generated level :
- * 
- * (1) alphabets - List of alphabets presented to the human player
- * (2) cpu descriptor - Configuration of CPU (opposite player) for this level. Higher levels will have tougher opposite players.
+ * You can use this interface to design a cache to hold words from different languages in the future
+ * Just write a class that implements this interface and pass it as a parameter to constructor of class com.android.wordzap.datamodel.LetterGrid
  * 
  */
 
-public class Level {
+public interface WordCache {
 
-	private char[] alphabets;
-	private CpuDescriptor aCpuDescriptor;
-
-	public char[] getAlphabets() {
-		return alphabets;
-	}
-
-	public void setAlphabets(char[] alphabets) {
-		this.alphabets = alphabets;
-	}
-
-	public CpuDescriptor getaCpuDescriptor() {
-		return aCpuDescriptor;
-	}
-
-	public void setaCpuDescriptor(CpuDescriptor aCpuDescriptor) {
-		this.aCpuDescriptor = aCpuDescriptor;
-	}
-
-	public Level(char[] alphabets, CpuDescriptor aCpuDescriptor) {
-		this.alphabets = alphabets.clone();
-		this.aCpuDescriptor = (CpuDescriptor) aCpuDescriptor.clone();
-	}
+	// Returns true if word is valid, false otherwise
+	boolean isWordValid(String word);
+	
+	//Returns list of all cached valid words
+	List< String > getValidWords();
 
 }
