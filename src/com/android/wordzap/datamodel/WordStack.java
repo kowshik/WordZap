@@ -44,6 +44,9 @@ import com.android.wordzap.exceptions.WordStackOverflowException;
  * 
  */
 public class WordStack extends Stack<Character> {
+
+	private static final long serialVersionUID = 4894696743121596582L;
+
 	/*
 	 * Integer storing the maximum size of the word. Usually corresponds to the
 	 * number of columns in the visual grid of letters seen by the human player

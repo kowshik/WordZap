@@ -34,6 +34,9 @@ package com.android.wordzap.exceptions;
 
 public class InvalidLevelException extends Exception {
 
+	
+	private static final long serialVersionUID = 453315432576908117L;
+
 	public InvalidLevelException(String msg) {
 		super(msg);
 	}

@@ -36,6 +36,11 @@ public class InvalidCpuDescriptionException extends Exception {
 
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2926545107722085001L;
+
 	public InvalidCpuDescriptionException(String msg){
 		super(msg);
 	}

@@ -34,15 +34,15 @@
 	</TextView>
 	<TextView android:id="@+id/txtViewPlus" android:layout_width="75dp"
 		android:layout_height="wrap_content" android:text="+"
-		android:textSize="25sp" android:layout_x="135px" android:layout_y="200px">
+		android:textSize="50sp" android:layout_x="115px" android:layout_y="200px">
 	</TextView>
 	<TextView android:id="@+id/txtViewMinus" android:layout_width="75dp"
 		android:layout_height="wrap_content" android:text="-"
-		android:textSize="25sp" android:layout_x="340px" android:layout_y="200px">
+		android:textSize="50sp" android:layout_x="360px" android:layout_y="195px">
 	</TextView>
 	<TextView android:id="@+id/txtViewLevel" android:layout_width="75dp"
 		android:layout_height="wrap_content" android:text="1"
-		android:textSize="25sp" android:layout_x="225px" android:layout_y="200px">
+		android:textSize="25sp" android:layout_x="225px" android:layout_y="213px">
 	</TextView>
 	<TextView android:id="@+id/txtViewHelp" android:layout_width="75dp"
 		android:layout_height="wrap_content" android:text="\?"

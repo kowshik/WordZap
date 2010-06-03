@@ -30,12 +30,20 @@ package com.android.wordzap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream.PutField;
 import java.lang.reflect.Field;
 import java.util.EmptyStackException;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Vector;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,6 +64,10 @@ import com.android.wordzap.exceptions.InvalidLevelException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.InvalidWordException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
+import com.android.wordzap.listeners.EndWordListener;
+import com.android.wordzap.listeners.GameScreenDialogListener;
+import com.android.wordzap.listeners.GridTextViewListener;
+import com.android.wordzap.listeners.LetterButtonListener;
 
 /*
  * Activity class for the game screen where all the action takes place between the human player and the computer
@@ -64,28 +76,9 @@ import com.android.wordzap.exceptions.WordStackOverflowException;
  */
 
 public class GameScreen extends Activity {
-	// Number of rows and cols in the visual grid
-	// This will be constant throughout the game
-	private final static int GRID_NUMROWS = 7;
-	private final static int GRID_NUMCOLS = 5;
-
-	// Beep sounds during special situations
-	public final static int CANT_PRESS_LETTER_BEEP = R.raw.letter_press_beep;
-	public final static int CANT_POP_LETTER_BEEP = R.raw.letter_pop_beep;
-	public final static int CANT_END_WORD_BEEP = R.raw.end_word_beep;
-	public final static int BAD_WORD_BEEP = R.raw.bad_word_beep;
-
-	// English word lists file
-	private static final int WORD_LISTS_FILE = R.raw.word_list;
-
-	// English alphabet frequencies file
-	private static final int ALPHABETS_FREQ_FILE = R.raw.english_alphabets_frequencies;
-	private static final int ALPHABETS_FREQ_FILE_DELIM = R.string.english_alphabets_frequencies_delim;
-
-	// Minimum word size allowed on the word zap screen
-	private static final int MIN_WORD_SIZE = 2;
-	public static final int START_LEVEL = LevelGenerator.MIN_LEVEL;
-	public static final String DIFFICULTY_PARAM_NAME = "difficulty";
+	
+	// Current level
+	private Level currentLevel;
 
 	// MediaPlayer object which will play the above beep sounds
 	private MediaPlayer mMediaPlayer;
@@ -139,6 +132,19 @@ public class GameScreen extends Activity {
 	private LevelGenerator levelGen;
 	private WordCache aWordCache;
 
+	// Computer position on the visual grid
+	private int computerPosition;
+
+	// List of words already used by the human player
+	private List<String> usedWords;
+
+	// Game over flag shared with ComputerPlayer thread
+	private volatile boolean gameOver;
+	private volatile boolean dialogOpen;
+
+	// Opponent thread
+	private Thread opponent;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -150,9 +156,9 @@ public class GameScreen extends Activity {
 		try {
 			/* Initiate level generator to generate word zap levels */
 			InputStream alphaFreqStream = this.getResources().openRawResource(
-					GameScreen.ALPHABETS_FREQ_FILE);
+					WordZapConstants.ALPHABETS_FREQ_FILE);
 			String alphaFreqStreamDelim = this.getResources().getString(
-					GameScreen.ALPHABETS_FREQ_FILE_DELIM);
+					WordZapConstants.ALPHABETS_FREQ_FILE_DELIM);
 			this.levelGen = new LevelGenerator(alphaFreqStream,
 					alphaFreqStreamDelim);
 
@@ -161,8 +167,8 @@ public class GameScreen extends Activity {
 			 * Retrieve all text views that represent the visual grid on screen
 			 * for the human player
 			 */
-			gridTxtViews = new TextView[GRID_NUMROWS][GRID_NUMCOLS];
-			gridTxtViewInputSource = new Button[GRID_NUMROWS][GRID_NUMCOLS];
+			gridTxtViews = new TextView[WordZapConstants.GRID_NUMROWS][WordZapConstants.GRID_NUMCOLS];
+			gridTxtViewInputSource = new Button[WordZapConstants.GRID_NUMROWS][WordZapConstants.GRID_NUMCOLS];
 			this.retrieveGridTxtViews();
 
 			/*
@@ -179,17 +185,17 @@ public class GameScreen extends Activity {
 			/*
 			 * Init start level
 			 */
-			int startLevel = getIntent().getIntExtra("difficulty",
-					GameScreen.START_LEVEL);
+			int startLevel = getIntent().getIntExtra(
+					WordZapConstants.DIFFICULTY_PARAM_KEYNAME, WordZapConstants.START_LEVEL);
 			Log.i(GameScreen.class.toString(), "" + startLevel);
-			Level thisLevel = this.levelGen.generateLevel(startLevel);
-			char[] levelChars = thisLevel.getAlphabets();
+			this.currentLevel = this.levelGen.generateLevel(startLevel);
+			char[] levelChars = this.currentLevel.getAlphabets();
 
 			/*
 			 * Init word cache
 			 */
 			InputStream wordListStream = this.getResources().openRawResource(
-					GameScreen.WORD_LISTS_FILE);
+					WordZapConstants.WORD_LISTS_FILE);
 			this.aWordCache = new EnglishWordCache(wordListStream, levelChars);
 
 			/*
@@ -203,47 +209,63 @@ public class GameScreen extends Activity {
 			 * Init grid text view listeners
 			 */
 			// Initiate letter grid
-			this.humanPlayerGrid = new LetterGrid(GameScreen.GRID_NUMROWS,
-					GameScreen.GRID_NUMCOLS, this.aWordCache);
+			this.humanPlayerGrid = new LetterGrid(WordZapConstants.GRID_NUMROWS,
+					WordZapConstants.GRID_NUMCOLS, this.aWordCache);
 
 			/*
 			 * Initiates computer player indicator text views
 			 */
 
-			this.computerPlayerTxtViews = new TextView[GameScreen.GRID_NUMROWS];
+			this.computerPlayerTxtViews = new TextView[WordZapConstants.GRID_NUMROWS];
 			this.initComputerIndicator();
+			
 			/*
 			 * Init mainThreadHandler ! This is an important piece of code that
 			 * handles messages from computer player thread
 			 */
 
 			mainThreadHandler = new Handler() {
+
 				public void handleMessage(Message msg) {
+					if (!isGameOver()) {
+						Bundle msgBundle = msg.getData();
 
-					for (TextView txtView : computerPlayerTxtViews) {
-						txtView.setText("");
+						// Is this a genword move by the opponent player ?
+						if (msgBundle.getBoolean(WordZapConstants.GENWORD_MOVE_KEYNAME) == true) {
+							if (!setOpponentPosition(computerPosition+1)) {
+								setGameOver(true);
+								showDialog(WordZapConstants.HUMAN_WIN_DIALOG);
+							}
+						}
 
+						// Is this a zap move by the opponent player ?
+						if (msgBundle.getBoolean(WordZapConstants.ZAP_MOVE_KEYNAME) == true) {
+							if (zapFromVisualGrid()) {
+								setOpponentPosition(computerPosition-1);
+							}
+						}
 					}
-
-					Random rand = new Random();
-					int randomIndicator = -1;
-					do {
-						randomIndicator = rand.nextInt(GRID_NUMROWS - 1);
-
-					} while (randomIndicator < 0);
-					computerPlayerTxtViews[randomIndicator].setText("-");
-
 				}
 
 			};
+
+			/* Initiate computer position on the visual grid */
+			this.computerPosition = -1;
+
+			/*
+			 * Initiate list of used words
+			 */
+
+			this.usedWords = new Vector<String>();
 
 			/*
 			 * Initiate computer player which runs as a separate background
 			 * thread
 			 */
-			Thread opponent = new Thread(new ComputerPlayer(humanPlayerGrid,
-					aWordCache, thisLevel, mainThreadHandler));
-			opponent.start();
+			this.opponent = new Thread(new ComputerPlayer(this, aWordCache,
+					this.currentLevel, mainThreadHandler));
+			this.setDialogOpen(true);
+			showDialog(WordZapConstants.SHOW_LEVEL_DIALOG);
 
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -267,6 +289,31 @@ public class GameScreen extends Activity {
 
 	}
 
+	// Starts computer player thread
+	public void startOpponent() {
+		this.opponent.start();
+	}
+
+	/*
+	 * Sets opponent player's position
+	 */
+	private boolean setOpponentPosition(int newPosition) {
+		for (TextView txtView : this.computerPlayerTxtViews) {
+			txtView.setText("");
+		}
+		if (newPosition < this.computerPosition && this.computerPosition >= 1) {
+			this.computerPosition--;
+			this.computerPlayerTxtViews[this.computerPosition].setText("-");
+		} else if (newPosition > this.computerPosition) {
+			this.computerPosition++;
+			this.computerPlayerTxtViews[this.computerPosition].setText("-");
+		}
+		if (this.computerPosition >= this.computerPlayerTxtViews.length - 1) {
+			return false;
+		}
+		return true;
+	}
+
 	private void retrieveCommonTxtViews() {
 		this.commonTxtView = (TextView) findViewById(R.id.txtViewCommon);
 	}
@@ -279,7 +326,7 @@ public class GameScreen extends Activity {
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
 		Class<id> idClass = R.id.class;
-		for (int rowIndex = 0; rowIndex < GameScreen.GRID_NUMROWS; rowIndex++) {
+		for (int rowIndex = 0; rowIndex < WordZapConstants.GRID_NUMROWS; rowIndex++) {
 
 			Field txtViewField = idClass.getField("txtViewComp" + rowIndex);
 			TextView aTxtView = (TextView) findViewById(txtViewField
@@ -291,7 +338,7 @@ public class GameScreen extends Activity {
 
 	}
 
-	// Initialising grid text view listeners
+	// Initializing grid text view listeners
 	private void initGridTxtViewListeners() {
 		for (int rowIndex = 0; rowIndex < gridTxtViews.length; rowIndex++) {
 			for (int colIndex = 0; colIndex < gridTxtViews[rowIndex].length; colIndex++) {
@@ -301,7 +348,7 @@ public class GameScreen extends Activity {
 		}
 	}
 
-	// Initialising letter buttons
+	// Initializing letter buttons
 	private void initCommandButtonListeners() {
 		this.btnTopFirst.setOnClickListener(new LetterButtonListener(this));
 		this.btnTopSecond.setOnClickListener(new LetterButtonListener(this));
@@ -354,8 +401,8 @@ public class GameScreen extends Activity {
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
 		Class<id> idClass = R.id.class;
-		for (int rowIndex = 0; rowIndex < GameScreen.GRID_NUMROWS; rowIndex++) {
-			for (int colIndex = 0; colIndex < GameScreen.GRID_NUMCOLS; colIndex++) {
+		for (int rowIndex = 0; rowIndex < WordZapConstants.GRID_NUMROWS; rowIndex++) {
+			for (int colIndex = 0; colIndex < WordZapConstants.GRID_NUMCOLS; colIndex++) {
 				Field txtViewField = idClass.getField("txtView" + rowIndex
 						+ colIndex);
 				TextView aTxtView = (TextView) findViewById(txtViewField
@@ -376,7 +423,7 @@ public class GameScreen extends Activity {
 	 * Throws InvalidStackOperationException : if locked words are manipulated,
 	 * without proper unlock operations
 	 */
-	public void pushToVisualGrid(Button srcButton)
+	public synchronized void pushToVisualGrid(Button srcButton)
 			throws WordStackOverflowException, InvalidStackOperationException {
 
 		// Fetch letter from command button
@@ -393,7 +440,7 @@ public class GameScreen extends Activity {
 		this.gridTxtViews[row][col].setText("" + pushedLetter);
 		this.gridTxtViewInputSource[row][col] = srcButton;
 
-		if (this.humanPlayerGrid.getWordAtTop().length() > GameScreen.MIN_WORD_SIZE) {
+		if (this.humanPlayerGrid.getWordAtTop().length() > WordZapConstants.MIN_WORD_SIZE) {
 			btnEndWord.setEnabled(true);
 		}
 
@@ -407,7 +454,7 @@ public class GameScreen extends Activity {
 	 * Throws InvalidStackOperationException : if you try to pop a letter from a
 	 * word thats already completed using 'End Word' button
 	 */
-	public void popFromVisualGrid(TextView touchedTxtView)
+	public synchronized void popFromVisualGrid(TextView touchedTxtView)
 			throws EmptyStackException, InvalidStackOperationException {
 		// Peek at data model
 		Map<String, String> map = this.humanPlayerGrid.peekLetter();
@@ -426,12 +473,14 @@ public class GameScreen extends Activity {
 					.setVisibility(View.VISIBLE);
 			gridTxtViewInputSource[poppedRow][poppedCol] = null;
 
-			// Remove word at top if the only unlocked letter at top of grid has
-			// been popped
+			/*
+			 * Remove word at top if the only unlocked letter at top of grid has
+			 * been popped
+			 */
 			if (poppedCol == 0) {
 				this.humanPlayerGrid.removeWordAtTop();
 			}
-			if (poppedCol == GameScreen.MIN_WORD_SIZE) {
+			if (poppedCol == WordZapConstants.MIN_WORD_SIZE) {
 				this.btnEndWord.setEnabled(false);
 			}
 		}
@@ -439,7 +488,59 @@ public class GameScreen extends Activity {
 	}
 
 	/*
-	 * Ends the word at the top of the grid
+	 * Removes a random word from the visual grid as well as the data model
+	 */
+
+	public synchronized boolean zapFromVisualGrid() {
+		List<String> completedWords = this.humanPlayerGrid
+				.getCompletedWordList();
+
+		/*
+		 * Can't zap unless the human player has completed atleast one word in
+		 * the grid
+		 */
+		if (completedWords.size() > 0) {
+			String wordToBeRemoved = completedWords.get(new Random()
+					.nextInt(completedWords.size()));
+			int removedWordIndex = this.humanPlayerGrid
+					.removeWord(wordToBeRemoved);
+			int gridRowIndex = 0, gridColIndex = 0;
+			/*
+			 * For each row R in the grid starting after the zapped row, copy R
+			 * to previous row
+			 */
+			Log.i("ComputerPlayer", "removedWordIndex : " + removedWordIndex);
+			for (gridRowIndex = removedWordIndex + 1; gridRowIndex < this.gridTxtViews.length; gridRowIndex++) {
+				/*
+				 * For each letter X in this row, copy X to same location in
+				 * previous row
+				 */
+				for (gridColIndex = 0; gridColIndex < gridTxtViews[gridRowIndex].length; gridColIndex++) {
+					gridTxtViews[gridRowIndex - 1][gridColIndex]
+							.setText(gridTxtViews[gridRowIndex][gridColIndex]
+									.getText());
+					gridTxtViewInputSource[gridRowIndex - 1][gridColIndex] = gridTxtViewInputSource[gridRowIndex][gridColIndex];
+				}
+			}
+
+			// Updates the top most row in the grid
+			for (gridColIndex = 0; gridColIndex < gridTxtViews[gridRowIndex - 1].length; gridColIndex++) {
+				gridTxtViews[gridRowIndex - 1][gridColIndex].setText("");
+				gridTxtViewInputSource[gridRowIndex - 1][gridColIndex] = null;
+			}
+			Log.i("ComputerPlayer", "Zapping in gamescreen");
+			this.displayErrorMessage("'" + wordToBeRemoved
+					+ "' was zapped by opponent !");
+			return true;
+		}
+		return false;
+
+	}
+
+	/*
+	 * Ends the word at the top of the grid, if its a valid word and wasnt used
+	 * earlier. Ends the game if the human player has won the game at the end of
+	 * this move
 	 * 
 	 * Throws EmptyStackException : if data model is empty
 	 * 
@@ -447,21 +548,36 @@ public class GameScreen extends Activity {
 	 * size zero, or an invalid word not validated by the WordCache object
 	 * passed to WordCache object.
 	 */
-	public void endWord() throws EmptyStackException,
+	public synchronized void endWord() throws EmptyStackException,
 			InvalidStackOperationException, DuplicateWordException,
 			InvalidWordException {
 
-		if (this.humanPlayerGrid.containsWord(this.humanPlayerGrid
-				.getWordAtTop())) {
-			throw new DuplicateWordException("'"
-					+ this.humanPlayerGrid.getWordAtTop() + "' already exists");
+		String wordAtTop = this.humanPlayerGrid.getWordAtTop();
+		if (this.humanPlayerGrid.containsWord(wordAtTop)) {
+			throw new DuplicateWordException("'" + wordAtTop
+					+ "' already exists");
+		}
+		if (this.usedWords.contains(wordAtTop)) {
+			throw new InvalidWordException("'" + wordAtTop
+					+ "' was already used");
 		}
 		if (!this.humanPlayerGrid.lockWordAtTop()) {
-			throw new InvalidWordException("'"
-					+ this.humanPlayerGrid.getWordAtTop()
+			throw new InvalidWordException("'" + wordAtTop
 					+ "' is not a valid word");
 		}
 
+		// Adds the word to list of already used words
+		this.usedWords.add(wordAtTop);
+
+		/*
+		 * Check if human player has won if yes, then end the game
+		 */
+		if (this.humanPlayerGrid.isGridFull()) {
+			this.setGameOver(true);
+			this.setDialogOpen(true);
+			showDialog(WordZapConstants.HUMAN_LOSE_DIALOG);
+
+		}
 	}
 
 	/*
@@ -474,21 +590,21 @@ public class GameScreen extends Activity {
 		try {
 
 			switch (beepType) {
-			case GameScreen.CANT_PRESS_LETTER_BEEP:
+			case WordZapConstants.CANT_PRESS_LETTER_BEEP:
 				mMediaPlayer = MediaPlayer.create(this,
-						GameScreen.CANT_PRESS_LETTER_BEEP);
+						WordZapConstants.CANT_PRESS_LETTER_BEEP);
 				break;
-			case GameScreen.CANT_POP_LETTER_BEEP:
+			case WordZapConstants.CANT_POP_LETTER_BEEP:
 				mMediaPlayer = MediaPlayer.create(this,
-						GameScreen.CANT_POP_LETTER_BEEP);
+						WordZapConstants.CANT_POP_LETTER_BEEP);
 				break;
-			case CANT_END_WORD_BEEP:
+			case WordZapConstants.CANT_END_WORD_BEEP:
 				mMediaPlayer = MediaPlayer.create(this,
-						GameScreen.CANT_END_WORD_BEEP);
+						WordZapConstants.CANT_END_WORD_BEEP);
 				break;
-			case BAD_WORD_BEEP:
+			case WordZapConstants.BAD_WORD_BEEP:
 				mMediaPlayer = MediaPlayer.create(this,
-						GameScreen.BAD_WORD_BEEP);
+						WordZapConstants.BAD_WORD_BEEP);
 			}
 
 			mMediaPlayer.setLooping(false);
@@ -503,7 +619,6 @@ public class GameScreen extends Activity {
 	/*
 	 * Cleanup code
 	 */
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -516,14 +631,15 @@ public class GameScreen extends Activity {
 	/*
 	 * Displays error message on a common text view
 	 */
-	public void displayErrorMessage(String msg) {
+	public synchronized void displayErrorMessage(String msg) {
 		this.commonTxtView.setText(msg);
+
 	}
 
 	/*
-	 * Sets all letter butons to visible again
+	 * Makes all letter buttons visible again
 	 */
-	public void reviveLetterButtons() {
+	public synchronized void reviveLetterButtons() {
 		for (Button letterButton : this.letterButtons) {
 			letterButton.setVisibility(Button.VISIBLE);
 		}
@@ -571,8 +687,22 @@ public class GameScreen extends Activity {
 		return -1;
 	}
 
-	public void clearErrorMessage() {
+	/*
+	 * Clears any message previously displayed on the common text view
+	 */
+	public synchronized void clearErrorMessage() {
 		this.commonTxtView.setText("");
+	}
+
+	// Tells ComputerPlayer if game is over
+	public boolean isGameOver() {
+		return gameOver;
+
+	}
+
+	// Used to communicae end of game to ComputerPlayer
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
 	}
 
 	@Override
@@ -581,6 +711,71 @@ public class GameScreen extends Activity {
 			Log.d(this.getClass().getName(), "back button pressed");
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	// Creates various onscreen dialogs
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		AlertDialog.Builder builder = null;
+		switch (id) {
+		case WordZapConstants.HUMAN_LOSE_DIALOG:
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage("You won ! Get ready for the next level.")
+					.setCancelable(false).setPositiveButton(
+							"Okay",
+							new GameScreenDialogListener(this,
+									WordZapConstants.HUMAN_LOSE_DIALOG));
+			dialog = builder.create();
+			break;
+		case WordZapConstants.HUMAN_WIN_DIALOG:
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+					"You lost ! Get ready to play the same level again.")
+					.setCancelable(false).setPositiveButton(
+							"Okay",
+							new GameScreenDialogListener(this,
+									WordZapConstants.HUMAN_WIN_DIALOG));
+			dialog = builder.create();
+			break;
+
+		case WordZapConstants.SHOW_LEVEL_DIALOG:
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+					"Level " + this.currentLevel.getLevelNumber() + "     ")
+					.setCancelable(false).setPositiveButton(
+							"Start",
+							new GameScreenDialogListener(this,
+									WordZapConstants.SHOW_LEVEL_DIALOG));
+			dialog = builder.create();
+			break;
+		}
+		return dialog;
+	}
+
+	// Tells if the user has opened any dialog in the visual game screen and is
+	// still viewing it
+	public boolean isDialogOpen() {
+		return this.dialogOpen;
+	}
+
+	// Used to communicate any opened dialog to this class
+	public void setDialogOpen(boolean value) {
+		this.dialogOpen = value;
+	}
+
+	/*
+	 * Kills this activity and returns an Intent object to calling activity
+	 * (Activity com.android.wordzap.StartScreen) explaining the next level to
+	 * be started
+	 */
+	public void startNextLevel(int levelJump) {
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(WordZapConstants.NEXT_LEVEL_PARAM_KEYNAME, currentLevel
+				.getLevelNumber()
+				+ levelJump);
+		setResult(Activity.RESULT_OK, returnIntent);
+		finish();
 	}
 
 }

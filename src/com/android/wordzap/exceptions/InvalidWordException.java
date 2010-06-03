@@ -34,6 +34,11 @@ package com.android.wordzap.exceptions;
  */
 
 public class InvalidWordException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1241608400775197189L;
+
 	public InvalidWordException(String msg){
 		super(msg);
 	}

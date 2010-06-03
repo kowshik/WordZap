@@ -1,3 +1,4 @@
+
 /**
  *  
  * @author Kowshik Prakasam
@@ -25,23 +26,44 @@
  * THE SOFTWARE.
  *
  */
+package com.android.wordzap.listeners;
 
-package com.android.wordzap.exceptions;
+import java.util.EmptyStackException;
+
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
+
+import com.android.wordzap.GameScreen;
+import com.android.wordzap.WordZapConstants;
+import com.android.wordzap.exceptions.InvalidStackOperationException;
 
 /* 
- * A class that represents invalid stack operations performed when in class WordStack when the word at top of stack is locked
- *
+ * This class listens to click events on TextViews in the visual grid
+ * Each click operation instructs an instance of the GameScreen activity to pop a letter from the grid
+ * 
  */
 
-public class InvalidStackOperationException extends Exception {
+public class GridTextViewListener implements OnClickListener {
+	private GameScreen theGameScreen;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1155556169006873406L;
+	public GridTextViewListener(GameScreen theGameScreen) {
+		this.theGameScreen = theGameScreen;
+	}
 
-	public InvalidStackOperationException(String msg) {
-		super(msg);
+	public void onClick(View v) {
+		TextView clickedLetter = (TextView) v;
+
+		try {
+
+			// Clear any existing messages
+			theGameScreen.clearErrorMessage();
+			theGameScreen.popFromVisualGrid(clickedLetter);
+		} catch (EmptyStackException e) {
+			theGameScreen.beep(WordZapConstants.CANT_POP_LETTER_BEEP);
+		} catch (InvalidStackOperationException e) {
+			theGameScreen.beep(WordZapConstants.CANT_POP_LETTER_BEEP);
+		}
 	}
 
 }

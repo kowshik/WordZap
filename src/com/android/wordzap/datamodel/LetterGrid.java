@@ -55,7 +55,7 @@ public class LetterGrid {
 	public static final String ROW_KEY = "row";
 	public static final String COL_KEY = "col";
 	public static final String LETTER_KEY = "letter";
-
+	
 	/*
 	 * Negative numRows and numCols cause constructor to throw appropriate
 	 * exceptions.
@@ -75,8 +75,8 @@ public class LetterGrid {
 	 * Negative numRows and numCols cause constructor to throw appropriate
 	 * exceptions.
 	 */
-	public LetterGrid(int numRows, int numCols,
-			final WordCache aWordCache) throws InvalidGridSizeException {
+	public LetterGrid(int numRows, int numCols, final WordCache aWordCache)
+			throws InvalidGridSizeException {
 		this(numRows, numCols);
 		if (aWordCache == null) {
 			throw new NullPointerException(
@@ -149,7 +149,7 @@ public class LetterGrid {
 		} else {
 			WordStack latestWordStack = stackOfWords.peek();
 			if (latestWordStack.isWordComplete()) {
-				if (stackOfWords.size() == this.getRowLimit()) {
+				if (this.isGridFull()) {
 					throw new WordStackOverflowException(letter, this
 							.getRowLimit());
 				}
@@ -270,6 +270,21 @@ public class LetterGrid {
 	}
 
 	/*
+	 * Returns List representation of completed words internally stored in the
+	 * grid
+	 */
+	public List<String> getCompletedWordList() {
+		List<String> wordList = new Vector<String>();
+		for (WordStack aWordStack : stackOfWords) {
+			if (aWordStack.isWordComplete()) {
+				wordList.add(aWordStack.toString());
+			}
+		}
+		return wordList;
+
+	}
+
+	/*
 	 * Clears the grid
 	 */
 	public void clearGrid() {
@@ -337,6 +352,35 @@ public class LetterGrid {
 					&& aWordStack.toString().equals(word)) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/*
+	 * Removes a word from the letter grid
+	 */
+	
+	public int removeWord(String word) {
+		WordStack stackToBeRemoved = null;
+		for (WordStack aWordStack : stackOfWords) {
+			if (aWordStack.isWordComplete()
+					&& aWordStack.toString().equals(word)) {
+				stackToBeRemoved = aWordStack;
+				break;
+			}
+		}
+		int wordIndex=stackOfWords.indexOf(stackToBeRemoved);
+		stackOfWords.remove(stackToBeRemoved);
+		return wordIndex;
+	}
+	
+	/*
+	 * Tells if the grid is full
+	 */
+	
+	public boolean isGridFull(){
+		if(this.getCompletedWordList().size() == this.getRowLimit()){
+			return true;
 		}
 		return false;
 	}

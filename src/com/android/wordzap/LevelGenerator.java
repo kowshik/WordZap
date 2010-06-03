@@ -283,7 +283,7 @@ public class LevelGenerator {
 			index++;
 		}
 
-		return new Level(levelAlphabets,thisCpuLevel);
+		return new Level(levelAlphabets,thisCpuLevel,level+1);
 	}
 
 	/*

@@ -61,6 +61,7 @@ public class StartScreen extends Activity implements OnClickListener {
 	
 	private static final int HELP_DIALOG=1;
 	private static final int CREDITS_DIALOG = 2;
+	private static final int START_GAME = 0;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -93,11 +94,8 @@ public class StartScreen extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		TextView clickedTxtView = (TextView) v;
 		if(clickedTxtView.equals(this.txtTitle)){
-			Intent i=new Intent(this, GameScreen.class);
-			//Pass this parameter to GameScreen activity for loading the initial level
 			int chosenLevel=Integer.parseInt(this.txtLevel.getText().toString());
-			i.putExtra(GameScreen.DIFFICULTY_PARAM_NAME, chosenLevel);
-			startActivity(i);
+			this.startGame(chosenLevel);
 		}
 		//User has selected the previous level by clicking on the TextView with the text : "+" 
 		if(clickedTxtView.equals(this.txtPlus)){
@@ -156,5 +154,31 @@ public class StartScreen extends Activity implements OnClickListener {
 	    	break;
 	    }
 	    return dialog;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 * 
+	 * Gets the next level to be started, and starts it using startGame(...) method
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(requestCode == StartScreen.START_GAME && resultCode == Activity.RESULT_OK){
+			int nextLevel=data.getIntExtra(WordZapConstants.NEXT_LEVEL_PARAM_KEYNAME,
+					WordZapConstants.START_LEVEL);
+			this.startGame(nextLevel);
+		}
+	}
+	
+	/*
+	 * Starts the GameScreen activity for any particualar level
+	 */
+	
+	private void startGame(int level){
+		Intent i=new Intent(this, GameScreen.class);
+		//Pass this parameter to GameScreen activity for loading the initial level
+		i.putExtra(WordZapConstants.DIFFICULTY_PARAM_KEYNAME, level);
+		startActivityForResult(i,StartScreen.START_GAME);
 	}
 }

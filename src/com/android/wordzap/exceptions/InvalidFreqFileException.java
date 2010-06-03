@@ -35,6 +35,11 @@ package com.android.wordzap.exceptions;
 
 public class InvalidFreqFileException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 425399167022331662L;
+
 	public InvalidFreqFileException(String msg) {
 		super(msg);
 	}

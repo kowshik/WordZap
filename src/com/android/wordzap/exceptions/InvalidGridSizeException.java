@@ -34,6 +34,10 @@ package com.android.wordzap.exceptions;
  */
 
 public class InvalidGridSizeException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2800989629849259629L;
 	private int numRows;
 	private int numCols;
 

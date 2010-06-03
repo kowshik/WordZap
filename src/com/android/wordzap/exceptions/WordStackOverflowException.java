@@ -35,6 +35,10 @@ package com.android.wordzap.exceptions;
 
 public class WordStackOverflowException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6708159980557380686L;
 	private char letter;
 	private int wordLimit;
 

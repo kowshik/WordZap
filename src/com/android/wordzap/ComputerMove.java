@@ -1,7 +1,7 @@
 /**
- * 
- * * @author Kowshik Prakasam
  *  
+ * @author Kowshik Prakasam
+ * 
  * The MIT License : http://www.opensource.org/licenses/mit-license.php
 
  * Copyright (c) 2010 Kowshik Prakasam
@@ -28,51 +28,57 @@
 
 package com.android.wordzap;
 
-import com.android.wordzap.exceptions.InvalidLevelException;
-
 /*
  * 
- * Captures the following details about any generated level :
+ * Defines a move made by the opposite player (Computer) using three attributes :
  * 
- * (1) alphabets - List of alphabets presented to the human player
- * (2) cpu descriptor - Configuration of CPU (opposite player) for this level. Higher levels will have tougher opposite players.
+ * (1) isZapMove : Will the computer zap a word from the human player's letter grid during this move ?
+ * (2) isGenWordMove : Will the computer player generate a new word against the human player during this move ?
+ * (3) time : At what time (in seconds) will the computer make its move ?
  * 
  */
 
-public class Level {
+public class ComputerMove {
+	private boolean isZapMove;
+	private boolean isGenWordMove;
+	private int time;
 
-	private char[] alphabets;
-	private CpuDescriptor aCpuDescriptor;
-	private int levelNumber;
-
-	public int getLevelNumber() {
-		return levelNumber;
+	// Getters,Setters for all attributes
+	public boolean isZapMove() {
+		return isZapMove;
 	}
 
-	public void setLevelNumber(int levelNumber) {
-		this.levelNumber = levelNumber;
+	public void setZapMove(boolean zapMove) {
+		this.isZapMove = zapMove;
 	}
 
-	public char[] getAlphabets() {
-		return alphabets;
+	public boolean isGenWordMove() {
+		return isGenWordMove;
 	}
 
-	public void setAlphabets(char[] alphabets) {
-		this.alphabets = alphabets;
+	public void setGenWordMove(boolean genWordMove) {
+		this.isGenWordMove = genWordMove;
 	}
 
-	public CpuDescriptor getCpuDescriptor() {
-		return aCpuDescriptor;
+	public int getTime() {
+		return time;
 	}
 
-	public void setCpuDescriptor(CpuDescriptor aCpuDescriptor) {
-		this.aCpuDescriptor = aCpuDescriptor;
+	public void setTime(int time) {
+		this.time = time;
 	}
 
-	public Level(char[] alphabets, CpuDescriptor aCpuDescriptor, int levelNumber) {
-		this.alphabets = alphabets.clone();
-		this.aCpuDescriptor = (CpuDescriptor) aCpuDescriptor.clone();
-		this.levelNumber=levelNumber;
+	public ComputerMove(boolean zapMove, boolean genWordMove, int time) {
+		this.isZapMove = zapMove;
+		this.isGenWordMove = genWordMove;
+		this.time = time;
+
 	}
 
+	// Describes a computer move
+	@Override
+	public String toString() {
+		return "\n\nZap Move : " + isZapMove + "\nGenWord Move : "
+				+ isGenWordMove + "\nTime : " + time + "\n\n";
+	}
 }

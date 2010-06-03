@@ -35,6 +35,11 @@ package com.android.wordzap.exceptions;
 
 public class DuplicateWordException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3842088032641642407L;
+
 	public DuplicateWordException(String msg) {
 		super(msg);
 	}
