@@ -46,4 +46,10 @@ public interface WordCache {
 	//Returns list of all cached valid words
 	List< String > getValidWords();
 
+	//Returns a random cached word
+	String getRandomWord();
+	
+	//Returns a random cached word not in the list : wordList
+	String getRandomWord(final List<String> wordList);
+	
 }

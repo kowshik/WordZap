@@ -54,8 +54,9 @@ public interface WordZapConstants {
 	/***********************************************/
 
 	/****** KEY NAMES IN KEY-VALUE PAIRS ******/
-	String GENWORD_MOVE_KEYNAME = "genword";
-	String ZAP_MOVE_KEYNAME = "zap";
+	String GENWORD_MOVE_KEYNAME = "genword_move";
+	String GENERATED_WORD_KEYNAME = "genword";
+	String ZAP_MOVE_KEYNAME = "zap_move";
 	String NEXT_LEVEL_PARAM_KEYNAME = "next_level";
 	String DIFFICULTY_PARAM_KEYNAME = "difficulty";
 	/******************************************/
@@ -78,6 +79,9 @@ public interface WordZapConstants {
 	int GRID_NUMROWS = 7;
 	// Minimum word size allowed on the word zap screen
 	int MIN_WORD_SIZE = 2;
+	// Maximum word size allowed on the word zap screen
+	// Same as the number of cols allowed in the letter grid
+	int MAX_WORD_SIZE = GRID_NUMCOLS;
 	/******************************************/
 
 	/****** REFERENCE DICTIONARY (ENGLISH) ******/

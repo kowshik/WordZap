@@ -38,9 +38,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import android.util.Log;
 
 /*
  * 
@@ -49,13 +52,16 @@ import java.util.Vector;
  */
 public class EnglishWordCache implements WordCache {
 
+	// Possible word lengths
+	private int[] wordLengths;
+
 	// Stores all word lists - grouped by word length (key)
 	private Map<Integer, Set<String>> wordListsHash;
 
 	/*
-	 * Constructs the cache from a list of words. Restricts caching of words
-	 * to those that can be formed from chars specified in charSet. All other
-	 * words in the word list stream is ignored.
+	 * Constructs the cache from a list of words. Restricts caching of words to
+	 * those that can be formed from chars specified in charSet. All other words
+	 * in the word list stream is ignored.
 	 * 
 	 * Parameter 1 : Path to file containing list of words
 	 * 
@@ -70,9 +76,9 @@ public class EnglishWordCache implements WordCache {
 	}
 
 	/*
-	 * Constructs the cache from a list of words. Restricts caching of words
-	 * to those that can be formed from chars specified in charSet. All other
-	 * words in the word list stream is ignored.
+	 * Constructs the cache from a list of words. Restricts caching of words to
+	 * those that can be formed from chars specified in charSet. All other words
+	 * in the word list stream is ignored.
 	 * 
 	 * Parameter 1 : Handle to file containing list of words
 	 * 
@@ -87,9 +93,9 @@ public class EnglishWordCache implements WordCache {
 	}
 
 	/*
-	 * Constructs the cache from a list of words. Restricts caching of words
-	 * to those that can be formed from chars specified in charSet. All other
-	 * words in the word list stream is ignored.
+	 * Constructs the cache from a list of words. Restricts caching of words to
+	 * those that can be formed from chars specified in charSet. All other words
+	 * in the word list stream is ignored.
 	 * 
 	 * Parameter 1 : Handle to file containing list of words
 	 * 
@@ -98,14 +104,20 @@ public class EnglishWordCache implements WordCache {
 	 * 
 	 * Throws IOException : If I/O errors happen when reading the list of words
 	 */
-	public EnglishWordCache(final Reader wordListHandle,
-			final char[] charSet) throws IOException {
+	public EnglishWordCache(final Reader wordListHandle, final char[] charSet)
+			throws IOException {
 		List<Character> charSetCollection = new Vector<Character>();
 		for (char alphabet : charSet) {
 			charSetCollection.add(Character.toUpperCase(alphabet));
 		}
 		this.wordListsHash = this.cacheWords(wordListHandle, charSetCollection);
-
+		this.wordLengths = new int[WordZapConstants.MAX_WORD_SIZE
+				- WordZapConstants.MIN_WORD_SIZE];
+		int index = 0, length = 0;
+		for (index = 0, length = WordZapConstants.MIN_WORD_SIZE + 1; length <= WordZapConstants.MAX_WORD_SIZE
+				&& index < wordLengths.length; length++, index++) {
+			this.wordLengths[index] = length;
+		}
 	}
 
 	/*
@@ -171,33 +183,60 @@ public class EnglishWordCache implements WordCache {
 	 * Parameter 2 : Word that needs to be checked
 	 */
 	private boolean isWordSubset(final List<Character> charSet, String word) {
-		int index = 0;
+
 		List<Character> charSetTmp = new LinkedList<Character>(charSet);
 
 		for (char alphabet : word.toCharArray()) {
-			if (charSet.isEmpty() || !charSet.contains(alphabet)) {
+			if (charSetTmp.isEmpty() || !charSetTmp.contains(alphabet)) {
 				return false;
 			}
 			charSetTmp.remove(new Character(alphabet));
-			word = word.substring(1, word.length());
-			index++;
+
 		}
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see com.android.wordzap.WordCache#getValidWords()
 	 * 
-	 * Returns list of cached valid english words 
+	 * Returns list of cached valid english words
 	 */
 	@Override
 	public List<String> getValidWords() {
-		List<String> wordList = new Vector< String >();
-		for(Map.Entry<Integer, Set<String>> mapEntry : wordListsHash.entrySet()){
+		List<String> wordList = new Vector<String>();
+		for (Map.Entry<Integer, Set<String>> mapEntry : wordListsHash
+				.entrySet()) {
 			wordList.addAll(mapEntry.getValue());
 		}
-		
+
 		return wordList;
+	}
+
+	@Override
+	public String getRandomWord() {
+		Random rand = new Random();
+		int someWordLength = wordLengths[rand.nextInt(wordLengths.length)];
+
+		Log.i("ComputerPlayer", "someLength : " + someWordLength);
+
+		Set<String> setOfWords = wordListsHash.get(someWordLength);
+		Log.i("ComputerPlayer", setOfWords.toString());
+
+		List<String> wordsList = new Vector<String>(setOfWords);
+
+		return wordsList.get(rand.nextInt(wordsList.size()));
+	}
+
+	@Override
+	public String getRandomWord(List<String> wordList) {
+		String randomWord = null;
+
+		do {
+			randomWord = this.getRandomWord();
+		} while (wordList.contains(randomWord));
+
+		return randomWord;
 	}
 }

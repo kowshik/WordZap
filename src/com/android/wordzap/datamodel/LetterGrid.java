@@ -192,11 +192,11 @@ public class LetterGrid {
 	 * object will have the following key - value pairs
 	 * 
 	 * 
-	 * Key : LetterGrid.ROW_KEY Value : Row to which the letter was popped in
+	 * Key : LetterGrid.ROW_KEY Value : Row from which the letter was popped in
 	 * the grid
 	 * 
 	 * 
-	 * Key : LetterGrid.COL_KEY Value : Col to which the letter was popped in
+	 * Key : LetterGrid.COL_KEY Value : Col from which the letter was popped in
 	 * the grid
 	 * 
 	 * Key : LetterGrid.LETTER_KEY Value : Letter which was popped

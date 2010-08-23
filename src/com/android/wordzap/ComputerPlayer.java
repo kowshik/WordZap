@@ -177,7 +177,7 @@ public class ComputerPlayer implements Runnable {
 	 * 
 	 * (1) Zap move : Computer zaps a word from the human player's visual grid
 	 * (2) Gen Word move : Computer generates a word in its own grid against the
-	 * human player
+	 * human player. This generated word is also packed in the Bundle returned.
 	 */
 	private Bundle packComputerMove(ComputerMove thisMove) {
 		Bundle aBundle = new Bundle();
@@ -191,6 +191,8 @@ public class ComputerPlayer implements Runnable {
 		if (thisMove.isGenWordMove()) {
 			Log.i("ComputerPlayer", "Packed gen word move");
 			aBundle.putBoolean(WordZapConstants.GENWORD_MOVE_KEYNAME, true);
+			String randomWord=this.aWordCache.getRandomWord(this.wordZapGameScreen.getCompletedWords());
+			aBundle.putString(WordZapConstants.GENERATED_WORD_KEYNAME, randomWord);
 		} else {
 			aBundle.putBoolean(WordZapConstants.GENWORD_MOVE_KEYNAME, false);
 		}
