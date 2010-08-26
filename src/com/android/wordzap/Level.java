@@ -1,6 +1,4 @@
 /**
- * 
- * * @author Kowshik Prakasam
  *  
  * The MIT License : http://www.opensource.org/licenses/mit-license.php
 
