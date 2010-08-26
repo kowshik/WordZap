@@ -57,6 +57,8 @@ public interface WordZapConstants {
 	String ZAP_MOVE_KEYNAME = "zap_move";
 	String NEXT_LEVEL_PARAM_KEYNAME = "next_level";
 	String DIFFICULTY_PARAM_KEYNAME = "difficulty";
+	String TIMER_VALUE_KEYNAME = "timer_value";
+	String GAME_OVER = "is_game_over";
 	/******************************************/
 
 	/****** OTHER PARAMETERS ******/
@@ -89,5 +91,13 @@ public interface WordZapConstants {
 	int WORD_LISTS_FILE = R.raw.word_list;
 	int ALPHABETS_FREQ_FILE_DELIM = R.string.english_alphabets_frequencies_delim;
 	/********************************************/
+
+	//Number of milliseconds for which the human player can afford to sleep
+	int HUMAN_SLEEP_CHECK = 30000;
+
+
+
+	
+	
 
 }

@@ -139,13 +139,22 @@ public class GameScreen extends Activity {
 	// List of words already used by the human player
 	private List<String> usedWords;
 
+	// Last word formed successfully by the human player
+	private volatile String lastWord;
+
 	// Game over flag shared with ComputerPlayer thread
 	private volatile boolean gameOver;
-	private volatile boolean dialogOpen;
 
 	// Opponent thread
 	private Thread opponent;
 
+	
+	//Timer thread
+	private Thread timer;
+	
+	// Handler object for handling computer player's message interrupts
+	private Handler timerThreadHandler;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -207,9 +216,9 @@ public class GameScreen extends Activity {
 			this.initCommandButtons(levelChars);
 			this.initCommandButtonListeners();
 
-			/*
-			 * Init grid text view listeners
-			 */
+			// Init last word formed by human player
+			this.lastWord = "";
+
 			// Initiate human player letter grid
 			this.humanPlayerGrid = new LetterGrid(
 					WordZapConstants.GRID_NUMROWS,
@@ -225,6 +234,30 @@ public class GameScreen extends Activity {
 
 			this.computerPlayerTxtViews = new TextView[WordZapConstants.GRID_NUMROWS];
 			this.initComputerIndicator();
+
+			/*
+			 * Init timerThreadHandler ! This is an important piece of code that
+			 * handles messages from timer thread
+			 */
+
+			timerThreadHandler = new Handler() {
+				public void handleMessage(Message msg) {
+					if (!isGameOver()) {
+						Bundle msgBundle = msg.getData();
+						boolean gameOver = msgBundle
+								.getBoolean(WordZapConstants.GAME_OVER);
+						if (gameOver) {
+							setGameOver(true);
+							showDialog(WordZapConstants.HUMAN_LOSE_DIALOG);
+						} else {
+							int timeValue = msgBundle
+									.getInt(WordZapConstants.TIMER_VALUE_KEYNAME);
+							displayErrorMessage("" + timeValue
+									+ " seconds left");
+						}
+					}
+				}
+			};
 
 			/*
 			 * Init mainThreadHandler ! This is an important piece of code that
@@ -253,7 +286,7 @@ public class GameScreen extends Activity {
 									+ compPlayerGrid.getCompletedWordList());
 							if (!setOpponentPosition(computerPosition + 1)) {
 								setGameOver(true);
-								showDialog(WordZapConstants.HUMAN_WIN_DIALOG);
+								showDialog(WordZapConstants.HUMAN_LOSE_DIALOG);
 							}
 						}
 
@@ -282,7 +315,14 @@ public class GameScreen extends Activity {
 			 */
 			this.opponent = new Thread(new ComputerPlayer(this, aWordCache,
 					this.currentLevel, mainThreadHandler));
-			this.setDialogOpen(true);
+
+			/*
+			 * Initiate timer thread
+			 * 
+			 */
+			
+			this.timer = new Thread(new Timer(this, timerThreadHandler));
+			
 			showDialog(WordZapConstants.SHOW_LEVEL_DIALOG);
 
 		} catch (SecurityException e) {
@@ -310,7 +350,8 @@ public class GameScreen extends Activity {
 	/*
 	 * Pushes a given word into the computer player's letter grid
 	 */
-	protected void pushToCompGrid(String generatedWord) throws WordStackOverflowException, InvalidStackOperationException {
+	protected void pushToCompGrid(String generatedWord)
+			throws WordStackOverflowException, InvalidStackOperationException {
 		for (int letterIndex = 0; letterIndex < generatedWord.length(); letterIndex++) {
 			compPlayerGrid.putLetter(generatedWord.charAt(letterIndex));
 		}
@@ -321,6 +362,7 @@ public class GameScreen extends Activity {
 	// Starts computer player thread
 	public void startOpponent() {
 		this.opponent.start();
+		this.timer.start();
 	}
 
 	/*
@@ -590,57 +632,59 @@ public class GameScreen extends Activity {
 			InvalidWordException {
 
 		String wordAtTop = this.humanPlayerGrid.getWordAtTop();
-		
-		//Is this word currently existent in the human player's grid ?
+
+		// Is this word currently existent in the human player's grid ?
 		if (this.humanPlayerGrid.containsWord(wordAtTop)) {
 			throw new DuplicateWordException("'" + wordAtTop
 					+ "' already exists");
 		}
-		
-		//Has this word been used already ?
+
+		// Has this word been used already ?
 		if (this.usedWords.contains(wordAtTop)) {
 			throw new InvalidWordException("'" + wordAtTop
 					+ "' was already used");
 		}
-		
-		//The computer player has already formed this word on its grid.
-		//So it has to be removed(zapped) from human and computer grids now
 
-		if(this.compPlayerGrid.getCompletedWordList().contains(wordAtTop)) {
-			
-			for(int index=0;index<wordAtTop.length();index++){
+		// The computer player has already formed this word on its grid.
+		// So it has to be removed(zapped) from human and computer grids now
+
+		if (this.compPlayerGrid.getCompletedWordList().contains(wordAtTop)) {
+
+			for (int index = 0; index < wordAtTop.length(); index++) {
 				Map<String, String> map = this.humanPlayerGrid.peekLetter();
 				int topWordRow = Integer.parseInt(map.get(LetterGrid.ROW_KEY));
 				int topWordCol = Integer.parseInt(map.get(LetterGrid.COL_KEY));
 				this.popFromVisualGrid(this.gridTxtViews[topWordRow][topWordCol]);
 			}
-			
+
 			this.compPlayerGrid.removeWord(wordAtTop);
-			this.setOpponentPosition(this.computerPosition-1);
+			this.setOpponentPosition(this.computerPosition - 1);
 			Log.i("HumanPlayer", "Zapping in gamescreen");
 			this.displayErrorMessage("'" + wordAtTop
 					+ "' was zapped by human player !");
 		}
-		
+
 		if (!this.humanPlayerGrid.lockWordAtTop()) {
 			throw new InvalidWordException("'" + wordAtTop
 					+ "' is not a valid word");
 		}
-		
-		
+
 		// Adds the word to list of already used words
 		this.usedWords.add(wordAtTop);
 
-		
+		// Setting this word as the last word successfully formed by the human
+		this.setLastWord(wordAtTop);
+
 		/*
 		 * Check if human player has won if yes, then end the game
 		 */
 		if (this.humanPlayerGrid.isGridFull()) {
 			this.setGameOver(true);
-			this.setDialogOpen(true);
-			showDialog(WordZapConstants.HUMAN_LOSE_DIALOG);
-
+			showDialog(WordZapConstants.HUMAN_WIN_DIALOG);
 		}
+		
+		//Waking up timer thread
+		this.timer.interrupt();
 	}
 
 	/*
@@ -758,13 +802,13 @@ public class GameScreen extends Activity {
 	}
 
 	// Tells ComputerPlayer if game is over
-	public boolean isGameOver() {
+	public synchronized boolean isGameOver() {
 		return gameOver;
 
 	}
 
 	// Used to communicae end of game to ComputerPlayer
-	public void setGameOver(boolean gameOver) {
+	public synchronized void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
 	}
 
@@ -782,17 +826,17 @@ public class GameScreen extends Activity {
 		Dialog dialog = null;
 		AlertDialog.Builder builder = null;
 		switch (id) {
-		case WordZapConstants.HUMAN_LOSE_DIALOG:
+		case WordZapConstants.HUMAN_WIN_DIALOG:
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage("You won ! Get ready for the next level.")
 					.setCancelable(false)
 					.setPositiveButton(
 							"Okay",
 							new GameScreenDialogListener(this,
-									WordZapConstants.HUMAN_LOSE_DIALOG));
+									WordZapConstants.HUMAN_WIN_DIALOG));
 			dialog = builder.create();
 			break;
-		case WordZapConstants.HUMAN_WIN_DIALOG:
+		case WordZapConstants.HUMAN_LOSE_DIALOG:
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage(
 					"You lost ! Get ready to play the same level again.")
@@ -800,7 +844,7 @@ public class GameScreen extends Activity {
 					.setPositiveButton(
 							"Okay",
 							new GameScreenDialogListener(this,
-									WordZapConstants.HUMAN_WIN_DIALOG));
+									WordZapConstants.HUMAN_LOSE_DIALOG));
 			dialog = builder.create();
 			break;
 
@@ -819,17 +863,6 @@ public class GameScreen extends Activity {
 		return dialog;
 	}
 
-	// Tells if the user has opened any dialog in the visual game screen and is
-	// still viewing it
-	public boolean isDialogOpen() {
-		return this.dialogOpen;
-	}
-
-	// Used to communicate any opened dialog to this class
-	public void setDialogOpen(boolean value) {
-		this.dialogOpen = value;
-	}
-
 	/*
 	 * Kills this activity and returns an Intent object to calling activity
 	 * (Activity com.android.wordzap.StartScreen) explaining the next level to
@@ -841,6 +874,14 @@ public class GameScreen extends Activity {
 				currentLevel.getLevelNumber() + levelJump);
 		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
+	}
+
+	public synchronized String getLastWord() {
+		return lastWord;
+	}
+
+	public synchronized void setLastWord(String lastWord) {
+		this.lastWord = lastWord;
 	}
 
 }

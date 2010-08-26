@@ -26,7 +26,6 @@
 
 package com.android.wordzap.listeners;
 
-
 import com.android.wordzap.GameScreen;
 import com.android.wordzap.WordZapConstants;
 
@@ -57,21 +56,19 @@ public class GameScreenDialogListener implements
 		 * start the opponent
 		 */
 		case WordZapConstants.SHOW_LEVEL_DIALOG:
-			this.gameScreen.setDialogOpen(false);
 			dialog.cancel();
 			gameScreen.startOpponent();
+			
 			break;
 
 		// When the user clicks on 'okay' button, restart the same level
-		case WordZapConstants.HUMAN_WIN_DIALOG:
-			this.gameScreen.setDialogOpen(false);
+		case WordZapConstants.HUMAN_LOSE_DIALOG:
 			dialog.cancel();
 			gameScreen.startNextLevel(WordZapConstants.HUMAN_LOSE_LEVELJUMP);
 			break;
 
 		// When user clicks on 'okay' button, start the next level
-		case WordZapConstants.HUMAN_LOSE_DIALOG:
-			this.gameScreen.setDialogOpen(false);
+		case WordZapConstants.HUMAN_WIN_DIALOG:
 			dialog.cancel();
 			gameScreen.startNextLevel(WordZapConstants.HUMAN_WIN_LEVELJUMP);
 			break;
