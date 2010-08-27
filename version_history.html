@@ -22,7 +22,7 @@
 		<a href="installation.html">Installation</a> 
 		<a href="screenshots.html">Screenshots</a> 
 		<a href="source_code.html">Source Code</a> 
-		<a href="authors_contact.html">Authors / Contact</a>
+		<a href="contributors_contact.html">Contributors / Contact</a>
 		<a href="how_can_i_contribute.html">How can I contribute ?</a> 
 		<a href="license.html">License</a> 
 	</div>
@@ -40,13 +40,23 @@
 	<br>
 	<h3 >Version History</h3>
 	<p>
-		
+
+	<h2 class="version_num">v0.5&nbsp;&nbsp;&nbsp;&nbsp;<a title="Right click, Save-as" href="http://github.com/downloads/kowshik/WordZap/WordZap-0.5.apk" ><img src="img/package_icon.png" width="53" height="48" align="center" alt="image example" /></a></h2>
+	<br>
+	<ul>
+	<li>This is an end-to-end version of WordZap with almost all core features. Several bugs fixed and many new features.</a></li>
+	<li>A fully functional opponent player has been implemented : <a href="http://github.com/kowshik/WordZap/tree/master/src/com/android/wordzap/ComputerPlayer.java">com.android.wordzap.ComputerPlayer</a>. It uses premeditated moves to attack the human player and writes to a separate visual letter grid.</li>
+	<li>Human players can now zap words against the computer player.</li>
+	<li>Implemented a timer feature : <a href="http://github.com/kowshik/WordZap/tree/master/src/com/android/wordzap/Timer.java">com.android.wordzap.Timer</a> to place a check on time taken by human player to make a move.</li>
+	<li>All moves made by the computer player are modelled by the <a href="http://github.com/kowshik/WordZap/tree/master/src/com/android/wordzap/ComputerMove.java">com.android.wordzap.ComputerMove</a> class</li>	
+	</ul>
+	<br>		
 	<h2 class="version_num">v0.3&nbsp;&nbsp;&nbsp;&nbsp;<a title="Right click, Save-as" href="http://github.com/downloads/kowshik/WordZap/WordZap-0.3.apk" ><img src="img/package_icon.png" width="53" height="48" align="center" alt="image example" /></a></h2>
 	<br>
 	<ul>
 	<li>Developed a module for validation of english words against the standard <a href="http://en.wikipedia.org/wiki/SOWPODS">SOWPODS word list</a></li>
 	<li>The core data model <a href="http://github.com/kowshik/WordZap/tree/master/src/com/android/wordzap/datamodel/">com.android.wordzap.datamodel</a> performs word validation by accepting a custom word validator defined by <a href="http://github.com/kowshik/WordZap/blob/master/src/com/android/wordzap/WordValidator.java">com.android.wordzap.WordValidator</a></li>
-	<li>Added a common text view above the letter command buttons in GameScreen activity which will be used to communicate messages to the human player</li>
+	<li>Added a common text view above the letter command buttons in <a href="http://github.com/kowshik/WordZap/tree/master/src/com/android/wordzap/GameScreen.java">com.android.wordzap.GameScreen</a> activity which will be used to communicate messages to the human player</li>
 	<li>Developed a module to generate levels of varying difficulty for the game</li>
 	<li>Developed skeleton code for the computer player</li>
 	<li>Added Start Screen which allows the user to set the difficulty level before starting the game</li>
