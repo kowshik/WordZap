@@ -23,59 +23,47 @@
  * THE SOFTWARE.
  *
  */
-
 package com.android.wordzap.listeners;
-
-import java.util.EmptyStackException;
 
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 import com.android.wordzap.GameScreen;
 import com.android.wordzap.WordZapConstants;
-import com.android.wordzap.exceptions.DuplicateWordException;
-import com.android.wordzap.exceptions.InvalidStackOperationException;
-import com.android.wordzap.exceptions.InvalidWordException;
 
-/*
- * Class that listens to clicks on End Word button in GameScreen
+/* 
+ * This class listens to click events on TextViews in the visual grid
+ * Each click event instructs an instance of the com.android.wordzap.GameScreen activity to pop a letter from the grid
+ * 
  */
 
-public class EndWordListener implements OnClickListener {
-	private final GameScreen theGameScreen;
+public class DispCompGridListener implements OnClickListener {
+	private GameScreen theGameScreen;
 
-	// Ties the Game Screen to this listener
-	public EndWordListener(GameScreen theGameScreen) {
-		this.theGameScreen = (GameScreen) theGameScreen;
+	// Whose letters are being shown now ?
+	private int visualGrid;
+
+	public DispCompGridListener(GameScreen theGameScreen) {
+		this.theGameScreen = theGameScreen;
+		this.visualGrid = WordZapConstants.HUMAN_PLAYER_GRID;
+
 	}
 
 	public void onClick(View v) {
-		try {
-			// Clear any existing messages
-			theGameScreen.clearMessage();
 
-			// Attempts to end the word at top of stack
-			theGameScreen.endWord();
+		// Clear any existing error messages
+		theGameScreen.clearMessage();
 
-			// Beep the end word sound
-			theGameScreen.beep(WordZapConstants.CANT_END_WORD_BEEP);
-
-			// Make visible all letter buttons
-			// They can be used for the next word by the user
-			theGameScreen.reviveLetterButtons();
-
-			v.setEnabled(false);
-		} catch (EmptyStackException e) {
-			theGameScreen.beep(WordZapConstants.CANT_END_WORD_BEEP);
-		} catch (InvalidStackOperationException e) {
-			theGameScreen.beep(WordZapConstants.CANT_END_WORD_BEEP);
-		} catch (DuplicateWordException e) {
-			theGameScreen.displayMessage(e.getMessage());
-			theGameScreen.beep(WordZapConstants.BAD_WORD_BEEP);
-		} catch (InvalidWordException e) {
-			theGameScreen.displayMessage(e.getMessage());
-			theGameScreen.beep(WordZapConstants.BAD_WORD_BEEP);
+		if (this.visualGrid == WordZapConstants.HUMAN_PLAYER_GRID) {
+			this.visualGrid = WordZapConstants.COMP_PLAYER_GRID;
+			theGameScreen.displayMessage("My words");
+		} else {
+			this.visualGrid = WordZapConstants.HUMAN_PLAYER_GRID;
+			theGameScreen.displayMessage("Your words");
 		}
+
+		theGameScreen.populateVisualGrid(this.visualGrid);
 
 	}
 

@@ -212,21 +212,38 @@ public class EnglishWordCache implements WordCache {
 		return wordList;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.android.wordzap.WordCache#getRandomWord(java.lang.String)
+	 * 
+	 * Returns a random cached word
+	 */
 	@Override
 	public String getRandomWord() {
 		Random rand = new Random();
-		int someWordLength = wordLengths[rand.nextInt(wordLengths.length)];
+		Set<String> setOfWords;
 
-		Log.i("ComputerPlayer", "someLength : " + someWordLength);
-
-		Set<String> setOfWords = wordListsHash.get(someWordLength);
+		//Retrieve words for some random length
+		do {
+			int someWordLength = wordLengths[rand.nextInt(wordLengths.length)];
+			Log.i("ComputerPlayer", "someLength : " + someWordLength);
+			setOfWords = wordListsHash.get(someWordLength);
+		} while (setOfWords == null);
 		Log.i("ComputerPlayer", setOfWords.toString());
-
 		List<String> wordsList = new Vector<String>(setOfWords);
 
 		return wordsList.get(rand.nextInt(wordsList.size()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.android.wordzap.WordCache#getRandomWord(java.util.List<
+	 * java.lang.String >)
+	 * 
+	 * Returns a random cached word not in the list : wordList
+	 */
 	@Override
 	public String getRandomWord(List<String> wordList) {
 		String randomWord = null;

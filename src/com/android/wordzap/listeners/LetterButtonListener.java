@@ -56,7 +56,7 @@ public class LetterButtonListener implements OnClickListener {
 		Button letterButton = (Button) v;
 
 		// Clear any existing messages
-		theGameScreen.clearErrorMessage();
+		theGameScreen.clearMessage();
 		try {
 			// Update the grid
 			theGameScreen.pushToVisualGrid(letterButton);

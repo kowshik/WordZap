@@ -28,7 +28,6 @@ package com.android.wordzap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream.PutField;
 import java.lang.reflect.Field;
 import java.util.EmptyStackException;
 import java.util.List;
@@ -39,8 +38,6 @@ import java.util.Vector;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -49,6 +46,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -62,10 +60,12 @@ import com.android.wordzap.exceptions.InvalidLevelException;
 import com.android.wordzap.exceptions.InvalidStackOperationException;
 import com.android.wordzap.exceptions.InvalidWordException;
 import com.android.wordzap.exceptions.WordStackOverflowException;
+import com.android.wordzap.listeners.DispCompGridListener;
 import com.android.wordzap.listeners.EndWordListener;
 import com.android.wordzap.listeners.GameScreenDialogListener;
 import com.android.wordzap.listeners.GridTextViewListener;
 import com.android.wordzap.listeners.LetterButtonListener;
+import com.android.wordzap.listeners.NextLevelListener;
 
 /*
  * Activity class for the game screen where all the action takes place between the human player and the computer
@@ -148,13 +148,12 @@ public class GameScreen extends Activity {
 	// Opponent thread
 	private Thread opponent;
 
-	
-	//Timer thread
+	// Timer thread
 	private Thread timer;
-	
+
 	// Handler object for handling computer player's message interrupts
 	private Handler timerThreadHandler;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -252,8 +251,7 @@ public class GameScreen extends Activity {
 						} else {
 							int timeValue = msgBundle
 									.getInt(WordZapConstants.TIMER_VALUE_KEYNAME);
-							displayErrorMessage("" + timeValue
-									+ " seconds left");
+							displayMessage("" + timeValue + " seconds left");
 						}
 					}
 				}
@@ -318,11 +316,10 @@ public class GameScreen extends Activity {
 
 			/*
 			 * Initiate timer thread
-			 * 
 			 */
-			
+
 			this.timer = new Thread(new Timer(this, timerThreadHandler));
-			
+
 			showDialog(WordZapConstants.SHOW_LEVEL_DIALOG);
 
 		} catch (SecurityException e) {
@@ -369,9 +366,13 @@ public class GameScreen extends Activity {
 	 * Sets opponent player's position
 	 */
 	private boolean setOpponentPosition(int newPosition) {
-		for (TextView txtView : this.computerPlayerTxtViews) {
-			txtView.setText("");
+
+		if ((Math.abs(this.computerPosition - newPosition) > 1)
+				|| (this.computerPosition >= this.computerPlayerTxtViews.length - 1)) {
+			return false;
 		}
+
+		clearOpponentPosition();
 		if (newPosition < this.computerPosition && this.computerPosition >= 1) {
 			this.computerPosition--;
 			this.computerPlayerTxtViews[this.computerPosition].setText("-");
@@ -379,9 +380,7 @@ public class GameScreen extends Activity {
 			this.computerPosition++;
 			this.computerPlayerTxtViews[this.computerPosition].setText("-");
 		}
-		if (this.computerPosition >= this.computerPlayerTxtViews.length - 1) {
-			return false;
-		}
+
 		return true;
 	}
 
@@ -419,6 +418,59 @@ public class GameScreen extends Activity {
 		}
 	}
 
+	/*
+	 * Switches listeners of visual grid text views so that after the level is
+	 * over, a click event on any of the text views will populate the human's
+	 * letter grid with words formed by the computer player or vice versa
+	 */
+	private void switchGridTxtViewListeners() {
+		OnClickListener aListener = new DispCompGridListener(this);
+		for (int rowIndex = 0; rowIndex < gridTxtViews.length; rowIndex++) {
+			for (int colIndex = 0; colIndex < gridTxtViews[rowIndex].length; colIndex++) {
+				gridTxtViews[rowIndex][colIndex].setOnClickListener(aListener);
+			}
+		}
+	}
+
+	/*
+	 * Populates the visual grid with words formed by the computer/human player.
+	 * Parameter 'target' should be
+	 */
+
+	public void populateVisualGrid(int target) {
+
+		// Remove all letters in the grid
+		this.clearVisualGrid();
+
+		LetterGrid targetGrid = null;
+
+		// Find which grid has to be populated visually
+		if (target == WordZapConstants.HUMAN_PLAYER_GRID) {
+			targetGrid = this.humanPlayerGrid;
+		} else if (target == WordZapConstants.COMP_PLAYER_GRID) {
+			targetGrid = this.compPlayerGrid;
+		}
+
+		List<String> wordList = targetGrid.getWordList();
+
+		for (int rowIndex = 0; rowIndex < wordList.size(); rowIndex++) {
+			String word = wordList.get(rowIndex);
+			for (int colIndex = 0; colIndex < word.length(); colIndex++) {
+				this.gridTxtViews[rowIndex][colIndex].setText(""
+						+ word.charAt(colIndex));
+			}
+		}
+
+	}
+
+	private void clearVisualGrid() {
+		for (int rowIndex = 0; rowIndex < gridTxtViews.length; rowIndex++) {
+			for (int colIndex = 0; colIndex < gridTxtViews[0].length; colIndex++) {
+				this.gridTxtViews[rowIndex][colIndex].setText("");
+			}
+		}
+	}
+
 	// Initializing letter buttons
 	private void initCommandButtonListeners() {
 		this.btnTopFirst.setOnClickListener(new LetterButtonListener(this));
@@ -432,6 +484,22 @@ public class GameScreen extends Activity {
 		this.btnBotFourth.setOnClickListener(new LetterButtonListener(this));
 
 		this.btnEndWord.setOnClickListener(new EndWordListener(this));
+
+	}
+
+	// Purge letter button listeners
+	private void purgeCommandButtonListeners() {
+		this.btnTopFirst.setOnClickListener(null);
+		this.btnTopSecond.setOnClickListener(null);
+		this.btnTopThird.setOnClickListener(null);
+		this.btnTopFourth.setOnClickListener(null);
+
+		this.btnBotFirst.setOnClickListener(null);
+		this.btnBotSecond.setOnClickListener(null);
+		this.btnBotThird.setOnClickListener(null);
+		this.btnBotFourth.setOnClickListener(null);
+
+		this.btnEndWord.setOnClickListener(null);
 
 	}
 
@@ -608,7 +676,7 @@ public class GameScreen extends Activity {
 				gridTxtViewInputSource[gridRowIndex - 1][gridColIndex] = null;
 			}
 			Log.i("ComputerPlayer", "Zapping in gamescreen");
-			this.displayErrorMessage("'" + wordToBeRemoved
+			this.displayMessage("'" + wordToBeRemoved
 					+ "' was zapped by opponent !");
 			return true;
 		}
@@ -660,7 +728,7 @@ public class GameScreen extends Activity {
 			this.compPlayerGrid.removeWord(wordAtTop);
 			this.setOpponentPosition(this.computerPosition - 1);
 			Log.i("HumanPlayer", "Zapping in gamescreen");
-			this.displayErrorMessage("'" + wordAtTop
+			this.displayMessage("'" + wordAtTop
 					+ "' was zapped by human player !");
 		}
 
@@ -682,8 +750,8 @@ public class GameScreen extends Activity {
 			this.setGameOver(true);
 			showDialog(WordZapConstants.HUMAN_WIN_DIALOG);
 		}
-		
-		//Waking up timer thread
+
+		// Waking up timer thread
 		this.timer.interrupt();
 	}
 
@@ -738,7 +806,7 @@ public class GameScreen extends Activity {
 	/*
 	 * Displays error message on a common text view
 	 */
-	public synchronized void displayErrorMessage(String msg) {
+	public synchronized void displayMessage(String msg) {
 		this.commonTxtView.setText(msg);
 
 	}
@@ -797,7 +865,7 @@ public class GameScreen extends Activity {
 	/*
 	 * Clears any message previously displayed on the common text view
 	 */
-	public synchronized void clearErrorMessage() {
+	public synchronized void clearMessage() {
 		this.commonTxtView.setText("");
 	}
 
@@ -869,17 +937,50 @@ public class GameScreen extends Activity {
 	 * be started
 	 */
 	public void startNextLevel(int levelJump) {
+		int nextLevel = currentLevel.getLevelNumber() + levelJump;
+
 		Intent returnIntent = new Intent();
 		returnIntent.putExtra(WordZapConstants.NEXT_LEVEL_PARAM_KEYNAME,
-				currentLevel.getLevelNumber() + levelJump);
+				nextLevel);
 		setResult(Activity.RESULT_OK, returnIntent);
+
 		finish();
 	}
 
+	/*
+	 * Modifies UI to suit the end of a level.
+	 * 
+	 * Sets up listeners to switch between human/computer grids when text views
+	 * are clicked on the visual grid.
+	 */
+
+	public void endLevel(int whoWon) {
+		this.clearMessage();
+
+		this.btnEndWord.setText("START");
+		this.btnEndWord.setEnabled(true);
+		this.purgeCommandButtonListeners();
+		this.btnEndWord.setOnClickListener(new NextLevelListener(this, whoWon));
+
+		this.reviveLetterButtons();
+		this.switchGridTxtViewListeners();
+		this.clearOpponentPosition();
+
+	}
+
+	// Clears marker that represents the computer player's position
+	private void clearOpponentPosition() {
+		for (TextView txtView : this.computerPlayerTxtViews) {
+			txtView.setText("");
+		}
+	}
+
+	// Getter method for lastWord attribute
 	public synchronized String getLastWord() {
 		return lastWord;
 	}
 
+	// Setter method for lastWord attribute
 	public synchronized void setLastWord(String lastWord) {
 		this.lastWord = lastWord;
 	}

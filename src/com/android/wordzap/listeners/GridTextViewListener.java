@@ -38,7 +38,7 @@ import com.android.wordzap.exceptions.InvalidStackOperationException;
 
 /* 
  * This class listens to click events on TextViews in the visual grid
- * Each click operation instructs an instance of the GameScreen activity to pop a letter from the grid
+ * Each click event instructs an instance of the com.android.wordzap.GameScreen activity to pop a letter from the grid
  * 
  */
 
@@ -55,7 +55,7 @@ public class GridTextViewListener implements OnClickListener {
 		try {
 
 			// Clear any existing messages
-			theGameScreen.clearErrorMessage();
+			theGameScreen.clearMessage();
 			theGameScreen.popFromVisualGrid(clickedLetter);
 		} catch (EmptyStackException e) {
 			theGameScreen.beep(WordZapConstants.CANT_POP_LETTER_BEEP);

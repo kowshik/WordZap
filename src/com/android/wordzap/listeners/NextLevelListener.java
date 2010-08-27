@@ -26,55 +26,42 @@
 
 package com.android.wordzap.listeners;
 
-import java.util.EmptyStackException;
-
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.android.wordzap.GameScreen;
 import com.android.wordzap.WordZapConstants;
-import com.android.wordzap.exceptions.DuplicateWordException;
-import com.android.wordzap.exceptions.InvalidStackOperationException;
-import com.android.wordzap.exceptions.InvalidWordException;
+
 
 /*
- * Class that listens to clicks on End Word button in GameScreen
+ * Class that listens to events triggering start of a new WordZap level
+ * 
  */
-
-public class EndWordListener implements OnClickListener {
+public class NextLevelListener implements OnClickListener {
 	private final GameScreen theGameScreen;
+	private int whoWon;
 
 	// Ties the Game Screen to this listener
-	public EndWordListener(GameScreen theGameScreen) {
+	public NextLevelListener(GameScreen theGameScreen, int whoWon) {
 		this.theGameScreen = (GameScreen) theGameScreen;
+		this.whoWon = whoWon;
+
 	}
 
+	@Override
 	public void onClick(View v) {
-		try {
-			// Clear any existing messages
-			theGameScreen.clearMessage();
+		Log.i("NextLevel",""+this.whoWon);
+		switch (this.whoWon) {
+		
+		case WordZapConstants.HUMAN_LOSS:
+			theGameScreen.startNextLevel(WordZapConstants.HUMAN_LOSE_LEVELJUMP);
+			break;
 
-			// Attempts to end the word at top of stack
-			theGameScreen.endWord();
-
-			// Beep the end word sound
-			theGameScreen.beep(WordZapConstants.CANT_END_WORD_BEEP);
-
-			// Make visible all letter buttons
-			// They can be used for the next word by the user
-			theGameScreen.reviveLetterButtons();
-
-			v.setEnabled(false);
-		} catch (EmptyStackException e) {
-			theGameScreen.beep(WordZapConstants.CANT_END_WORD_BEEP);
-		} catch (InvalidStackOperationException e) {
-			theGameScreen.beep(WordZapConstants.CANT_END_WORD_BEEP);
-		} catch (DuplicateWordException e) {
-			theGameScreen.displayMessage(e.getMessage());
-			theGameScreen.beep(WordZapConstants.BAD_WORD_BEEP);
-		} catch (InvalidWordException e) {
-			theGameScreen.displayMessage(e.getMessage());
-			theGameScreen.beep(WordZapConstants.BAD_WORD_BEEP);
+		case WordZapConstants.HUMAN_WIN:
+			theGameScreen.startNextLevel(WordZapConstants.HUMAN_WIN_LEVELJUMP);
+			break;
+			
 		}
 
 	}

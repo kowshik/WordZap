@@ -51,6 +51,12 @@ public interface WordZapConstants {
 	int SHOW_LEVEL_DIALOG = 2;
 	/***********************************************/
 
+	/****** IDENTIFIES HUMAN LOSS/WIN IN A LEVEL *****/
+	int HUMAN_LOSS = 0;
+	int HUMAN_WIN = 1;
+	/***********************************************/
+
+	
 	/****** KEY NAMES IN KEY-VALUE PAIRS ******/
 	String GENWORD_MOVE_KEYNAME = "genword_move";
 	String GENERATED_WORD_KEYNAME = "genword";
@@ -95,8 +101,13 @@ public interface WordZapConstants {
 	//Number of milliseconds for which the human player can afford to sleep
 	int HUMAN_SLEEP_CHECK = 30000;
 
+	//Identifies the human player's visual grid
+	int HUMAN_PLAYER_GRID = 0;
 
+	//Identifies the coimputer player's visual grid
+	int COMP_PLAYER_GRID = 1;
 
+	
 	
 	
 

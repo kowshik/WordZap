@@ -58,19 +58,25 @@ public class GameScreenDialogListener implements
 		case WordZapConstants.SHOW_LEVEL_DIALOG:
 			dialog.cancel();
 			gameScreen.startOpponent();
-			
+
 			break;
 
-		// When the user clicks on 'okay' button, restart the same level
+		/*
+		 * When the user clicks on 'okay' button, restart the same level when
+		 * user clicks on 'start' button later
+		 */
 		case WordZapConstants.HUMAN_LOSE_DIALOG:
 			dialog.cancel();
-			gameScreen.startNextLevel(WordZapConstants.HUMAN_LOSE_LEVELJUMP);
+			gameScreen.endLevel(WordZapConstants.HUMAN_LOSS);
 			break;
 
-		// When user clicks on 'okay' button, start the next level
+		/*
+	     * When the user clicks on 'okay' button, start the next level when
+		 * user clicks on 'start' button later
+		 */
 		case WordZapConstants.HUMAN_WIN_DIALOG:
 			dialog.cancel();
-			gameScreen.startNextLevel(WordZapConstants.HUMAN_WIN_LEVELJUMP);
+			gameScreen.endLevel(WordZapConstants.HUMAN_WIN);
 			break;
 		}
 	}
