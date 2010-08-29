@@ -26,6 +26,7 @@
 
 package com.android.wordzap;
 
+import android.content.res.Resources.Theme;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -89,13 +90,13 @@ public class Timer implements Runnable {
 
 				Bundle aBundle = new Bundle();
 				int time;
-
+				
 				/**
 				 * Run the timer in the Game Screen UI until : The game is over
 				 * due to no response from human player (OR) Human player
 				 * interrupts by forming a valid word
 				 */
-				for (time = WordZapConstants.HUMAN_SLEEP_CHECK; time >= 1000
+				for (time = WordZapConstants.HUMAN_SLEEP_CHECK; time >= 0
 						&& this.lastWord.equals(this.wordZapGameScreen
 								.getLastWord())
 						&& !wordZapGameScreen.isGameOver(); time -= 1000) {
@@ -107,7 +108,7 @@ public class Timer implements Runnable {
 					aBundle.clear();
 					aBundle.putInt(WordZapConstants.TIMER_VALUE_KEYNAME,
 							time / 1000);
-					aBundle.putBoolean(WordZapConstants.GAME_OVER, false);
+					aBundle.putInt(WordZapConstants.GAME_STATUS, WordZapConstants.NONE);
 
 					// Obtain message to be sent
 					Message msg = mainThreadHandler.obtainMessage();
@@ -124,8 +125,14 @@ public class Timer implements Runnable {
 				 * Oops, game is over because human player failed to respond
 				 * with a valid word
 				 */
-				if (time < 1000) {
-					aBundle.putBoolean(WordZapConstants.GAME_OVER, true);
+				if (time < 0) {
+					if(wordZapGameScreen.getCompletedWords().size() > wordZapGameScreen.getOpponentGridSize() ){
+						aBundle.putInt(WordZapConstants.GAME_STATUS, WordZapConstants.HUMAN_WIN);
+					}else if(wordZapGameScreen.getCompletedWords().size() < wordZapGameScreen.getOpponentGridSize() ){
+						aBundle.putInt(WordZapConstants.GAME_STATUS, WordZapConstants.HUMAN_LOSS);
+					}else{
+						aBundle.putInt(WordZapConstants.GAME_STATUS, WordZapConstants.DRAW);
+					}
 					Message msg = mainThreadHandler.obtainMessage();
 					msg.setData(aBundle);
 					mainThreadHandler.sendMessage(msg);

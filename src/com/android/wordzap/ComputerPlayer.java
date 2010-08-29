@@ -163,7 +163,8 @@ public class ComputerPlayer implements Runnable {
 
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//Don't care as the thread is interrupted during a human win
+			Log.i("ComputerPlayer","Interrupted");
 		}
 
 	}

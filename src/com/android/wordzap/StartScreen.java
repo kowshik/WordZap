@@ -198,9 +198,12 @@ public class StartScreen extends Activity implements OnClickListener {
 			int nextLevel = data.getIntExtra(
 					WordZapConstants.NEXT_LEVEL_PARAM_KEYNAME,
 					WordZapConstants.START_LEVEL);
-			if (nextLevel <= LevelGenerator.MAX_LEVEL) {
+			 if(nextLevel < LevelGenerator.MIN_LEVEL) {
+				 this.startGame(LevelGenerator.MIN_LEVEL);
+			 }
+			 else if (nextLevel <= LevelGenerator.MAX_LEVEL) {
 				this.startGame(nextLevel);
-			} else {
+			}else{
 				this.showDialog(StartScreen.GAMEOVER_DIALOG);
 			}
 		}

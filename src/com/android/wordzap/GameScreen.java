@@ -243,16 +243,31 @@ public class GameScreen extends Activity {
 				public void handleMessage(Message msg) {
 					if (!isGameOver()) {
 						Bundle msgBundle = msg.getData();
-						boolean gameOver = msgBundle
-								.getBoolean(WordZapConstants.GAME_OVER);
-						if (gameOver) {
+						int gameStatus = msgBundle
+								.getInt(WordZapConstants.GAME_STATUS);
+
+						switch (gameStatus) {
+						case WordZapConstants.HUMAN_LOSS:
 							setGameOver(true);
 							showDialog(WordZapConstants.HUMAN_LOSE_DIALOG);
-						} else {
+							break;
+						case WordZapConstants.HUMAN_WIN:
+							setGameOver(true);
+							showDialog(WordZapConstants.HUMAN_WIN_DIALOG);
+							break;
+						case WordZapConstants.DRAW:
+							setGameOver(true);
+							showDialog(WordZapConstants.DRAW_DIALOG);
+							break;
+						case WordZapConstants.NONE:
 							int timeValue = msgBundle
 									.getInt(WordZapConstants.TIMER_VALUE_KEYNAME);
 							displayMessage("" + timeValue + " seconds left");
+							break;
+						default:
+							break;
 						}
+
 					}
 				}
 			};
@@ -283,7 +298,14 @@ public class GameScreen extends Activity {
 							Log.i("ComputerPlayer", "cpu grid : "
 									+ compPlayerGrid.getCompletedWordList());
 							if (!setOpponentPosition(computerPosition + 1)) {
+								
 								setGameOver(true);
+
+								// Killing opponent
+								opponent.interrupt();
+
+								// Waking up timer thread
+								timer.interrupt();
 								showDialog(WordZapConstants.HUMAN_LOSE_DIALOG);
 							}
 						}
@@ -562,6 +584,14 @@ public class GameScreen extends Activity {
 	}
 
 	/*
+	 * Retrieves size of computer player's grid
+	 */
+
+	public synchronized int getOpponentGridSize() {
+		return this.compPlayerGrid.getCompletedWordList().size();
+	}
+
+	/*
 	 * Updates the visual grid and the data model with a new letter
 	 * 
 	 * Throws WordStackOverflowException : if the stack at the top of the letter
@@ -748,11 +778,19 @@ public class GameScreen extends Activity {
 		 */
 		if (this.humanPlayerGrid.isGridFull()) {
 			this.setGameOver(true);
+
+			// Waking up timer thread
+			this.timer.interrupt();
+
+			// Killing opponent
+			this.opponent.interrupt();
+
 			showDialog(WordZapConstants.HUMAN_WIN_DIALOG);
 		}
 
 		// Waking up timer thread
 		this.timer.interrupt();
+
 	}
 
 	/*
@@ -875,7 +913,7 @@ public class GameScreen extends Activity {
 
 	}
 
-	// Used to communicae end of game to ComputerPlayer
+	// Used to communicate end of game to ComputerPlayer
 	public synchronized void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
 	}
@@ -913,6 +951,17 @@ public class GameScreen extends Activity {
 							"Okay",
 							new GameScreenDialogListener(this,
 									WordZapConstants.HUMAN_LOSE_DIALOG));
+			dialog = builder.create();
+			break;
+		case WordZapConstants.DRAW_DIALOG:
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+					"Game Drawn. Get ready to play the same level again.")
+					.setCancelable(false)
+					.setPositiveButton(
+							"Okay",
+							new GameScreenDialogListener(this,
+									WordZapConstants.DRAW_DIALOG));
 			dialog = builder.create();
 			break;
 

@@ -53,7 +53,7 @@ public class GameScreenDialogListener implements
 		switch (this.whatDialog) {
 		/*
 		 * If user clicks on 'start' button when level number is displayed, then
-		 * start the opponent
+		 * start the level
 		 */
 		case WordZapConstants.SHOW_LEVEL_DIALOG:
 			dialog.cancel();
@@ -62,7 +62,7 @@ public class GameScreenDialogListener implements
 			break;
 
 		/*
-		 * When the user clicks on 'okay' button, restart the same level when
+		 * After the user clicks on 'okay' button, restart the same level when
 		 * user clicks on 'start' button later
 		 */
 		case WordZapConstants.HUMAN_LOSE_DIALOG:
@@ -71,14 +71,25 @@ public class GameScreenDialogListener implements
 			break;
 
 		/*
-	     * When the user clicks on 'okay' button, start the next level when
-		 * user clicks on 'start' button later
+		 * After the user clicks on 'okay' button, start the next level when
+		 * user clicks on 'start' button
 		 */
 		case WordZapConstants.HUMAN_WIN_DIALOG:
 			dialog.cancel();
 			gameScreen.endLevel(WordZapConstants.HUMAN_WIN);
 			break;
+
+		/*
+		 * After the user clicks on 'okay' button, restart the same level when
+		 * user clicks on 'start' button
+		 */
+		case WordZapConstants.DRAW_DIALOG:
+			dialog.cancel();
+			gameScreen.endLevel(WordZapConstants.DRAW);
+			break;
+
 		}
+
 	}
 
 }

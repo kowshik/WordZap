@@ -40,20 +40,24 @@ public interface WordZapConstants {
 	int DEFAULT_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 	/***************************/
 
-	/****** LEVEL INCREMENT/DECREMENT DURING HUMAN WIN/LOSS ******/
-	int HUMAN_LOSE_LEVELJUMP = 0;
+	/****** LEVEL INCREMENT/DECREMENT DURING HUMAN WIN/LOSS/DRAW ******/
+	int HUMAN_LOSE_LEVELJUMP = -1;
 	int HUMAN_WIN_LEVELJUMP = 1;
+	int GAME_DRAW_LEVELJUMP = 0;
 	/*************************************************************/
 
 	/****** DIALOG BOXES IN THE USER INTERFACE *****/
 	int HUMAN_WIN_DIALOG = 0;
 	int HUMAN_LOSE_DIALOG = 1;
 	int SHOW_LEVEL_DIALOG = 2;
+	int DRAW_DIALOG = 3;
 	/***********************************************/
 
 	/****** IDENTIFIES HUMAN LOSS/WIN IN A LEVEL *****/
 	int HUMAN_LOSS = 0;
 	int HUMAN_WIN = 1;
+	int DRAW = 2;
+	int NONE=-1;
 	/***********************************************/
 
 	
@@ -64,7 +68,7 @@ public interface WordZapConstants {
 	String NEXT_LEVEL_PARAM_KEYNAME = "next_level";
 	String DIFFICULTY_PARAM_KEYNAME = "difficulty";
 	String TIMER_VALUE_KEYNAME = "timer_value";
-	String GAME_OVER = "is_game_over";
+	String GAME_STATUS = "game_status"; 
 	/******************************************/
 
 	/****** OTHER PARAMETERS ******/
@@ -108,7 +112,9 @@ public interface WordZapConstants {
 	int COMP_PLAYER_GRID = 1;
 
 	
-	
+
+
+
 	
 
 }

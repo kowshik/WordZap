@@ -57,7 +57,9 @@ public class NextLevelListener implements OnClickListener {
 		case WordZapConstants.HUMAN_LOSS:
 			theGameScreen.startNextLevel(WordZapConstants.HUMAN_LOSE_LEVELJUMP);
 			break;
-
+		case WordZapConstants.DRAW:
+			theGameScreen.startNextLevel(WordZapConstants.GAME_DRAW_LEVELJUMP);
+			break;
 		case WordZapConstants.HUMAN_WIN:
 			theGameScreen.startNextLevel(WordZapConstants.HUMAN_WIN_LEVELJUMP);
 			break;
