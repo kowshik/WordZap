@@ -29,8 +29,6 @@ package com.android.wordzap;
 import java.util.List;
 
 /* 
- * Interface to be implemented by any WordCache
- * 
  * You can use this interface to design a cache to hold words from different languages in the future
  * Just write a class that implements this interface and pass it as a parameter to constructor of class com.android.wordzap.datamodel.LetterGrid
  * 
