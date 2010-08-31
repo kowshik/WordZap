@@ -4,14 +4,14 @@ function setHeight(pageName)
 
 	var minHeights = new Array();
 	
-	minHeights['home']=690;
+	minHeights['home']=940;
 	minHeights['version_history']=1350;
 	minHeights['installation']=3200;
 	minHeights['screenshots']=1050;
-	minHeights['source_code']=690;
-	minHeights['authors_contact']=690;
-	minHeights['contribute']=690;
-	minHeights['license']=690;
+	minHeights['source_code']=940;
+	minHeights['authors_contact']=940;
+	minHeights['contribute']=940;
+	minHeights['license']=940;
 	
 	if(screen.height < minHeights[pageName])
 	{
