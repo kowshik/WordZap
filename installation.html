@@ -57,11 +57,11 @@
 	<br>
 	<li>Follow the steps to <a href="http://developer.android.com/sdk/installing.html">Install Android SDK</a> on your workstation.</li>
 	<br>
-	<li>The Android SDK includes a variety of <a href="http://developer.android.com/guide/developing/tools/index.html">Custom Tools</a> that help you develop mobile applications on the Android platform. The most important of these are the <a href="http://developer.android.com/guide/developing/tools/emulator.html">Android Emulator</a> and the <a href="http://developer.android.com/guide/developing/tools/adt.html">Android Development Tools (ADT) plugin</a> for Eclipse. However, Eclipse is not required to run the WordZap APK file on the Android emulator. The SDK also includes a variety of other tools for debugging, packaging, and installing your applications on the emulator from the command line.
+	<li>The Android SDK includes a variety of <a href="http://developer.android.com/guide/developing/tools/index.html">Custom Tools</a> that help you develop mobile applications on the Android platform. The most important of these are the <a href="http://developer.android.com/guide/developing/tools/emulator.html">Android Emulator</a> and the <a href="http://developer.android.com/guide/developing/tools/adt.html">Android Development Tools (ADT) plugin</a> for Eclipse. However, Eclipse is not required to run the <i>WordZap</i> APK file on the Android emulator. The SDK also includes a variety of other tools for debugging, packaging, and installing your applications on the emulator from the command line.
 	</li>
 	<br>
 	<li>
-	Skip all steps in the <a href="http://developer.android.com/sdk/installing.html">Android SDK Installation Tutorial</a> related to setting up Eclipse and the ADT plugin for eclipse - its not required, and look at <a href="http://developer.android.com/sdk/adding-components.html">Adding SDK components</a>. Launch the <a href="http://developer.android.com/sdk/adding-components.html#launching">Android SDK and AVD manager</a> as explained in the tutorial. You need to download at least one platform into your environment, so that you will be able to set up an <a href="http://developer.android.com/guide/developing/tools/avd.html">Android Virtual Device (AVD)</a> to run it on the  <a href="http://developer.android.com/guide/developing/tools/emulator.html">Android Emulator</a>. To start with, just download the latest version of the platform. WordZap runs on Android 1.6 and above.
+	Skip all steps in the <a href="http://developer.android.com/sdk/installing.html">Android SDK Installation Tutorial</a> related to setting up Eclipse and the ADT plugin for eclipse - its not required, and look at <a href="http://developer.android.com/sdk/adding-components.html">Adding SDK components</a>. Launch the <a href="http://developer.android.com/sdk/adding-components.html#launching">Android SDK and AVD manager</a> as explained in the tutorial. You need to download at least one platform into your environment, so that you will be able to set up an <a href="http://developer.android.com/guide/developing/tools/avd.html">Android Virtual Device (AVD)</a> to run it on the  <a href="http://developer.android.com/guide/developing/tools/emulator.html">Android Emulator</a>. To start with, just download the latest version of the platform. <i>WordZap</i> runs on Android 1.6 and above.
 	</li>
 	</ol>
 	<h2 class="inst_subheading">Creating an Android Virtual Device (AVD) :</h2>
@@ -82,10 +82,10 @@
 			<pre><code>$ ./android create avd --name <avd name> --target &lt;target id of new AVD&gt;</code></pre>
 		</li>
 	</ol>
-	<h2 class="inst_subheading">Pushing the WordZap APK file to emulator :</h2>
+	<h2 class="inst_subheading">Pushing the <i>WordZap</i> APK file to emulator :</h2>
 	<ol>
 		<li>
-			Once the AVD is setup, the emulator should be up and running to install the WordZap APK.
+			Once the AVD is setup, the emulator should be up and running to install the <i>WordZap</i> APK.
 			Navigate to the &lt;sdk&gt;/tools/ directory and start the emulator with the command below.<br>
 			<pre><code>$ ./emulator -avd &lt;name&gt;</code></pre>
 			This should open the emulator's GUI in a separate window. Wait until the emulator displays the 'Home' screen of your virtual device - This may take a few minutes. You can then use ADB to manipulate this emualtor instance, as shown below.
@@ -100,13 +100,13 @@
 			 In our case, there is only a single instance running.
 		</li>
 		<li>
-			Now, install the WordZap APK as shown below.<br>
+			Now, install the <i>WordZap</i> APK as shown below.<br>
 			<pre><code>$ ./adb install &lt;Path of WordZap.apk file&gt;</code></pre>
-			When you install future versions of the WordZap APK, you should reinstall it using the -r option as show below.
+			When you install future versions of the <i>WordZap</i> APK, you should reinstall it using the -r option as show below.
 		  	<pre><code>$ ./adb install -r &lt;Path of WordZap.apk file&gt;</code></pre>
 		</li>
 		<li>
-		Now, goto the emulator window and start the WordZap application from the Applications menu. You should be able to view the opening screen of WordZap in a few seconds.
+		Now, goto the emulator window and start the <i>WordZap</i> application from the Applications menu. You should be able to view the opening screen of <i>WordZap</i> in a few seconds.
 		</li>
 	</ol>
 </div>
